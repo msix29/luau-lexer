@@ -63,6 +63,11 @@ impl TokenType {
                     return Some(TokenType::Literal(number));
                 }
             }
+            '.' if matches!(lexer.next_char(), Some('0'..='9')) => {
+                if let Some(number) = Literal::parse_from_number(lexer) {
+                    return Some(TokenType::Literal(number));
+                }
+            }
             '\'' | '"' | '`' | '[' => {
                 if let Some(string) = Literal::parse_from_string(lexer) {
                     return Some(TokenType::Literal(string));
