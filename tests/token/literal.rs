@@ -1,6 +1,6 @@
 use luau_lexer::prelude::{Lexer, Literal, LuauString, TokenType};
 
-macro_rules! generate_tests {
+macro_rules! generate_string_tests {
     ($( $(#[$meta: meta])? $fn_name: ident => $enum: ident ($str: literal) ),* $(,)?) => {
         $(
             $(#[$meta])?
@@ -25,7 +25,7 @@ macro_rules! generate_tests {
     };
 }
 
-generate_tests!(
+generate_string_tests!(
     single_quotes_empty => SingleQuotes("''"),
     single_quotes => SingleQuotes("'single quotes test'"),
     single_quotes_multi_line => SingleQuotes(r#"'single quotes\z\ntest'"#),
@@ -51,7 +51,7 @@ generate_tests!(
     multi_line_6 => MultiLine("[==[multi-\nline]====\n test \n]==]"),
 );
 
-generate_tests!(
+generate_string_tests!(
     #[should_panic] erroneous_single_quotes_empty => SingleQuotes("'"),
     #[should_panic] erroneous_single_quotes => SingleQuotes("'single\nquotes test"),
 
