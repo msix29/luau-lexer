@@ -189,7 +189,7 @@ impl Literal {
     }
 
     #[inline]
-    pub fn parse_from_string(lexer: &mut Lexer) -> Option<Self> {
+    pub fn parse_string(lexer: &mut Lexer) -> Option<Self> {
         LuauString::try_parse(lexer).map(Self::String)
     }
 }

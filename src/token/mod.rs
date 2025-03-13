@@ -69,7 +69,7 @@ impl TokenType {
                 }
             }
             '\'' | '"' | '`' | '[' => {
-                if let Some(string) = Literal::parse_from_string(lexer) {
+                if let Some(string) = Literal::parse_string(lexer) {
                     return Some(TokenType::Literal(string));
                 }
             }
