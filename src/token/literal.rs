@@ -36,21 +36,40 @@ impl LuauString {
         }
     }
 
+    fn is_multi_line_escaped(characters: &[char]) -> bool {
+        let mut iter = characters.iter().rev().skip_while(|c| c.is_whitespace()); // Skip trailing spaces
+
+        let Some(&last) = iter.next() else {
+            return false;
+        };
+        let Some(&second_last) = iter.next() else {
+            return false;
+        };
+
+        second_last == '\\' && last == 'z'
+    }
+
     fn try_parse_inner(lexer: &mut Lexer, quote_character: char) -> Option<String> {
         let mut characters = vec![quote_character];
         let start = lexer.lexer_position;
         let mut is_done = false;
 
-        while let Some(character) = lexer.next_char() {
-            if character == '\n' {
+        lexer.increment_position_by_char(quote_character);
+
+        while let Some(character) = lexer.current_char() {
+            if character == '\n' && !Self::is_multi_line_escaped(&characters) {
                 lexer.errors.push(LexerError::new(
                     start,
-                    format!("Missing {} to close string.", quote_character),
+                    format!(
+                        "String must be single line, use `\\z` here or add a {}.",
+                        quote_character
+                    ),
                     Some(lexer.lexer_position),
                 ));
 
                 break;
             }
+
             characters.push(character);
             lexer.increment_position_by_char(character);
 
@@ -68,9 +87,6 @@ impl LuauString {
                 Some(lexer.lexer_position),
             ));
         }
-
-        // Does it work? Yes. How? Idk.
-        lexer.increment_position(1);
 
         Some(characters.iter().collect::<String>())
     }
@@ -129,9 +145,6 @@ impl LuauString {
                 Some(lexer.lexer_position),
             ));
         }
-
-        // Does it work? Yes. How? Idk.
-        lexer.increment_position(1);
 
         Some(characters.iter().collect::<String>())
     }
