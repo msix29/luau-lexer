@@ -158,7 +158,7 @@ pub enum Literal {
 }
 
 impl Literal {
-    pub fn parse_from_number(lexer: &mut Lexer) -> Option<Self> {
+    pub fn parse_number(lexer: &mut Lexer) -> Option<Self> {
         let start = lexer.position;
         let mut found_decimal = false;
 

@@ -59,12 +59,12 @@ impl TokenType {
 
         match character {
             '0'..='9' => {
-                if let Some(number) = Literal::parse_from_number(lexer) {
+                if let Some(number) = Literal::parse_number(lexer) {
                     return Some(TokenType::Literal(number));
                 }
             }
             '.' if matches!(lexer.next_char(), Some('0'..='9')) => {
-                if let Some(number) = Literal::parse_from_number(lexer) {
+                if let Some(number) = Literal::parse_number(lexer) {
                     return Some(TokenType::Literal(number));
                 }
             }
