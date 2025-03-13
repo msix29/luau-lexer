@@ -151,16 +151,18 @@ impl LuauString {
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Literal {
-    Number(String),
-    String(LuauString),
-    Boolean(bool),
+pub enum LuauNumber {
+    Plain(String),
+    Binary(String),
+    Hex(String),
 }
 
-impl Literal {
-    pub fn parse_number(lexer: &mut Lexer) -> Option<Self> {
-        match lexer.next_char()? {
-            _ => Self::parse_number_inner(lexer)
+impl LuauNumber {
+    pub fn try_parse(lexer: &mut Lexer) -> Option<Self> {
+        match (lexer.current_char()?, lexer.next_char()?) {
+            ('0', 'b') => Self::parse_binary_number(lexer),
+            ('0', 'x') => Self::parse_hex_number(lexer),
+            _ => Self::parse_number_inner(lexer),
         }
     }
 
@@ -191,7 +193,101 @@ impl Literal {
             }
         }
 
-        Some(Self::Number(lexer.input[start..lexer.position].to_string()))
+        Some(Self::Plain(lexer.input[start..lexer.position].to_string()))
+    }
+
+    fn parse_hex_number(lexer: &mut Lexer) -> Option<Self> {
+        let start = lexer.position;
+        let mut found_digit = false;
+        let mut is_faulty = false;
+
+        lexer.consume('0');
+        lexer.consume('x');
+
+        loop {
+            let Some(current_char) = lexer.current_char() else {
+                break;
+            };
+
+            if current_char.is_ascii_hexdigit() {
+                lexer.increment_position_by_char(current_char);
+                found_digit = true;
+            } else {
+                break is_faulty = !current_char.is_whitespace();
+            }
+        }
+
+        // ? Do we exit or return the faulty number?
+        if !found_digit {
+            lexer.errors.push(LexerError::new(
+                lexer.lexer_position,
+                "Hexadecimal numbers must have at least one digit after '0x'.".to_string(),
+                None,
+            ));
+        }
+        if found_digit && is_faulty {
+            lexer.errors.push(LexerError::new(
+                lexer.lexer_position,
+                "Hexadecimal numbers must only contain hexadecimal digits.".to_string(),
+                None,
+            ));
+        }
+
+        Some(Self::Hex(lexer.input[start..lexer.position].to_string()))
+    }
+
+    fn parse_binary_number(lexer: &mut Lexer) -> Option<Self> {
+        let start = lexer.position;
+        let mut found_digit = false;
+        let mut is_faulty = false;
+
+        lexer.consume('0');
+        lexer.consume('b');
+
+        loop {
+            let Some(current_char) = lexer.current_char() else {
+                break;
+            };
+
+            if current_char == '0' || current_char == '1' {
+                lexer.increment_position_by_char(current_char);
+                found_digit = true;
+            } else {
+                break is_faulty = !current_char.is_whitespace();
+            }
+        }
+
+        // ? Do we exit or return the faulty number?
+        if !found_digit {
+            lexer.errors.push(LexerError::new(
+                lexer.lexer_position,
+                "Binary number must have at least one digit after '0b'.".to_string(),
+                None,
+            ));
+        }
+        if found_digit && is_faulty {
+            lexer.errors.push(LexerError::new(
+                lexer.lexer_position,
+                "Binary number must only have 1s and 0s.".to_string(),
+                None,
+            ));
+        }
+
+        Some(Self::Binary(lexer.input[start..lexer.position].to_string()))
+    }
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Literal {
+    Number(LuauNumber),
+    String(LuauString),
+    Boolean(bool),
+}
+
+impl Literal {
+    #[inline]
+    pub fn parse_number(lexer: &mut Lexer) -> Option<Self> {
+        LuauNumber::try_parse(lexer).map(Self::Number)
     }
 
     #[inline]
