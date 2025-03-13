@@ -50,13 +50,13 @@ generate_tests!(
 
 generate_tests!(
     #[should_panic] erroneous_single_quotes_empty => SingleQuotes("'"),
-    #[should_panic] erroneous_single_quotes => SingleQuotes("'single quotes test"),
+    #[should_panic] erroneous_single_quotes => SingleQuotes("'single\nquotes test"),
 
     #[should_panic] erroneous_double_quotes_empty => DoubleQuotes(r#"""#),
-    #[should_panic] erroneous_double_quotes => DoubleQuotes(r#""double quotes test"#),
+    #[should_panic] erroneous_double_quotes => DoubleQuotes(r#""\nouble quotes test"#),
 
     #[should_panic] erroneous_backticks_empty => Bacticks("`"),
-    #[should_panic] erroneous_backticks => Bacticks("`backticks test"),
+    #[should_panic] erroneous_backticks => Bacticks("`backticks\ntest"),
 
     #[should_panic] erroneous_multi_line_empty_1 => MultiLine("[]]"),
     #[should_panic] erroneous_multi_line_empty_2 => MultiLine("[==[]=]"),
