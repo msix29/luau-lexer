@@ -1,12 +1,16 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::{error::LexerError, state::State};
+use crate::{
+    error::LexerError,
+    state::State,
+    token::{Token, TokenType},
+};
 
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Lexer<'a> {
     pub(crate) input: &'a str,
     pub(crate) chars: Vec<char>,
-    pub(crate) errors: Vec<LexerError>,
+    pub/* (crate) */ errors: Vec<LexerError>,
 
     pub(crate) state: State,
 }
@@ -40,6 +44,39 @@ impl<'a> Lexer<'a> {
     #[inline]
     pub fn set_state(&mut self, state: State) {
         self.state = state;
+    }
+
+    pub fn next_token(&mut self) -> Token {
+        if !self.errors.is_empty() {
+            let error = self.errors.remove(0);
+            let start = error.start();
+
+            return TokenType::Error(error).into_token(
+                Some(start),
+                Some(self.lexer_position),
+                "".to_string(),
+                "".to_string(),
+            );
+        }
+
+        let start = self.lexer_position;
+
+        TokenType::try_lex(self)
+            .map(|token_type| {
+                let whitespaces = self.skip_whitespace();
+                let spaces_before = self.last_whitespace.clone();
+                let spaces_after = whitespaces.clone();
+
+                self.last_whitespace = whitespaces;
+
+                token_type.into_token(
+                    Some(start),
+                    Some(self.lexer_position),
+                    spaces_before,
+                    spaces_after,
+                )
+            })
+            .unwrap_or_else(|| Token::END_OF_FILE)
     }
 
     #[inline]
@@ -86,7 +123,7 @@ impl<'a> Lexer<'a> {
         self.input[start..self.position].to_string()
     }
 
-    pub fn skip_whitespace(&mut self) -> Option<String> {
+    pub fn skip_whitespace(&mut self) -> String {
         let start = self.position;
         while let Some(character) = self.current_char() {
             if character.is_whitespace() {
@@ -96,7 +133,9 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        (start != self.position).then(|| self.input[start..self.position].to_string())
+        (start != self.position)
+            .then(|| self.input[start..self.position].to_string())
+            .unwrap_or_default()
     }
 }
 
