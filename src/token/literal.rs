@@ -159,6 +159,12 @@ pub enum Literal {
 
 impl Literal {
     pub fn parse_number(lexer: &mut Lexer) -> Option<Self> {
+        match lexer.next_char()? {
+            _ => Self::parse_number_inner(lexer)
+        }
+    }
+
+    fn parse_number_inner(lexer: &mut Lexer) -> Option<Self> {
         let start = lexer.position;
         let mut found_decimal = false;
 
