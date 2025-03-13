@@ -28,12 +28,15 @@ macro_rules! generate_tests {
 generate_tests!(
     single_quotes_empty => SingleQuotes("''"),
     single_quotes => SingleQuotes("'single quotes test'"),
+    single_quotes_multi_line => SingleQuotes(r#"'single quotes\z\ntest'"#),
 
     double_quotes_empty => DoubleQuotes(r#""""#),
     double_quotes => DoubleQuotes(r#""double quotes test""#),
+    double_quotes_multi_line => DoubleQuotes(r#""double quotes\z\ntest""#),
 
     backticks_empty => Bacticks("``"),
     backticks => Bacticks("`backticks test`"),
+    backticks_multi_line => Bacticks(r#"`backticks\z\ntest`"#),
 
     multi_line_empty_1 => MultiLine("[[]]"),
     multi_line_empty_2 => MultiLine("[==[]==]"),
