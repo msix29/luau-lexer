@@ -6,20 +6,20 @@ crate_reexport!(literal, keyword, symbol, operator);
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Token {
-    pub start: Option<Position>,
+    pub start: Position,
     pub spaces_before: String,
     pub token_type: TokenType,
     pub spaces_after: String,
-    pub end: Option<Position>,
+    pub end: Position,
 }
 
 impl Token {
     pub const END_OF_FILE: Self = Self {
-        start: None,
+        start: Position::MAX,
         spaces_before: String::new(),
         token_type: TokenType::EndOfFile,
         spaces_after: String::new(),
-        end: None,
+        end: Position::MAX,
     };
 }
 
@@ -45,8 +45,8 @@ pub enum TokenType {
 impl TokenType {
     pub fn into_token(
         self,
-        start: Option<Position>,
-        end: Option<Position>,
+        start: Position,
+        end: Position,
         spaces_before: String,
         spaces_after: String,
     ) -> Token {

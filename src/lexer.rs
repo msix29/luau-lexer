@@ -52,8 +52,8 @@ impl<'a> Lexer<'a> {
             let start = error.start();
 
             return TokenType::Error(error).into_token(
-                Some(start),
-                Some(self.lexer_position),
+                start,
+                self.lexer_position,
                 "".to_string(),
                 "".to_string(),
             );
@@ -70,8 +70,8 @@ impl<'a> Lexer<'a> {
                 self.last_whitespace = whitespaces;
 
                 token_type.into_token(
-                    Some(start),
-                    Some(self.lexer_position),
+                    start,
+                    self.lexer_position,
                     spaces_before,
                     spaces_after,
                 )
