@@ -2,7 +2,7 @@ mod r#impl;
 
 use crate::prelude::{LexerError, Position};
 
-crate_reexport!(literal, keyword, symbol);
+crate_reexport!(literal, keyword, symbol, operator);
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Token {
@@ -37,6 +37,8 @@ pub enum TokenType {
     Keyword(Keyword),
     PartialKeyword(PartialKeyword),
     Symbol(Symbol),
+    Operator(Operator),
+    CompoundOperator(CompoundOperator),
     EndOfFile,
 }
 
@@ -64,4 +66,6 @@ impl_from!(TokenType <= {
     Keyword(Keyword),
     PartialKeyword(PartialKeyword),
     Symbol(Symbol),
+    Operator(Operator),
+    CompoundOperator(CompoundOperator),
 });
