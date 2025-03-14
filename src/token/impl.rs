@@ -46,12 +46,26 @@ impl Lexable for TokenType {
                 }
             }
             '>' if lexer.next_char() == Some('=') => {
+                lexer.increment_position(2);
+
                 return Some(Self::CompoundOperator(
                     CompoundOperator::GreaterThanOrEqualTo,
-                ))
+                ));
             }
             '<' if lexer.next_char() == Some('=') => {
-                return Some(Self::CompoundOperator(CompoundOperator::LessThanOrEqualTo))
+                lexer.increment_position(2);
+
+                return Some(Self::CompoundOperator(CompoundOperator::LessThanOrEqualTo));
+            }
+            '-' if lexer.next_char() == Some('>') => {
+                lexer.increment_position(2);
+
+                return Some(Self::Symbol(Symbol::Arrow));
+            }
+            ':' if lexer.next_char() == Some(':') => {
+                lexer.increment_position(2);
+
+                return Some(Self::Symbol(Symbol::Typecast));
             }
             _ if is_identifier_start(character) => {
                 let word = lexer.consume_identifier();

@@ -8,6 +8,8 @@ macro_rules! generate_symbols {
             $( $name, )*
             Dot,
             Ellipses,
+            Arrow,
+            Typecast,
         }
 
         impl $struct {
