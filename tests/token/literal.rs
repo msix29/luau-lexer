@@ -113,3 +113,19 @@ generate_number_tests!(
     #[should_panic] erroneous_hexadecimal => Hex("0xGhI"),
     #[should_panic] erroneous_binary => Binary("0b23"),
 );
+
+#[test]
+fn bool() {
+    let mut lexer = Lexer::new("true false");
+
+    assert_eq!(lexer.next_token().token_type, TokenType::Literal(Literal::Boolean(true)));
+    assert_eq!(lexer.next_token().token_type, TokenType::Literal(Literal::Boolean(false)));
+}
+
+#[should_panic]
+#[test]
+fn erroneous_bool() {
+    let mut lexer = Lexer::new("tru");
+
+    assert_eq!(lexer.next_token().token_type, TokenType::Literal(Literal::Boolean(true)));
+}
