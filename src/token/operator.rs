@@ -9,9 +9,6 @@ pub enum Operator {
     Exponentiation,
 
     Equal,
-
-    LessThan,
-    GreaterThan,
     NotEqual,
 
     Length,
@@ -28,8 +25,6 @@ impl Operator {
             '%' => Some(Self::Modulo),
             '^' => Some(Self::Exponentiation),
             '=' => Some(Self::Equal),
-            '<' => Some(Self::LessThan),
-            '>' => Some(Self::GreaterThan),
             '~' if next_char == Some('=') => Some(Self::NotEqual),
             '#' => Some(Self::Length),
             _ => None,
@@ -67,8 +62,6 @@ impl CompoundOperator {
             Operator::Modulo => Some(Self::ModuloEqual),
             Operator::Exponentiation => Some(Self::ExponentiationEqual),
             Operator::Equal => Some(Self::EqualEqual),
-            Operator::LessThan => Some(Self::LessThanOrEqualTo),
-            Operator::GreaterThan => Some(Self::GreaterThanOrEqualTo),
             _ => None,
         }
     }

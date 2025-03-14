@@ -29,6 +29,9 @@ generate_symbols!(
         '[' => OpeningBrackets,
         ']' => ClosingBrackets,
 
+        '<' => OpeningAngleBrackets,
+        '>' => ClosingAngleBrackets,
+
         '(' => OpeningParenthesis,
         ')' => ClosingParenthesis,
 

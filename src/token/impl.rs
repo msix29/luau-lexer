@@ -1,5 +1,8 @@
 use crate::{
-    prelude::{Keyword, Lexable, Lexer, LexerError, Literal, PartialKeyword, Symbol, TokenType},
+    prelude::{
+        CompoundOperator, Keyword, Lexable, Lexer, LexerError, Literal, PartialKeyword, Symbol,
+        TokenType,
+    },
     utils::is_identifier_start,
 };
 
@@ -41,6 +44,12 @@ impl Lexable for TokenType {
                 if let Some(string) = Literal::parse_string(lexer) {
                     return Some(Self::Literal(string));
                 }
+            }
+            '>' if lexer.next_char() == Some('=') => {
+                return Some(Self::CompoundOperator(CompoundOperator::GreaterThanOrEqualTo))
+            }
+            '<' if lexer.next_char() == Some('=') => {
+                return Some(Self::CompoundOperator(CompoundOperator::LessThanOrEqualTo))
             }
             _ if is_identifier_start(character) => {
                 let word = lexer.consume_identifier();
