@@ -108,3 +108,13 @@ generate_number_tests!(
     hexadecimal => Hex("0x0123456789ABCDEF"),
     binary => Binary("0b11001010101001"),
 );
+
+generate_number_tests!(
+    #[should_panic] erroneous_plain_1 => Plain("1.1.1"),
+    #[should_panic] erroneous_plain_2 => Plain("1.b"),
+    #[should_panic] erroneous_plain_3 => Plain("1c.1"),
+    #[should_panic] erroneous_plain_4 => Plain("_.1"),
+
+    #[should_panic] erroneous_hexadecimal => Hex("0xGhI"),
+    #[should_panic] erroneous_binary => Binary("0b23"),
+);
