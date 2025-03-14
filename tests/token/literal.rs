@@ -1,4 +1,4 @@
-use luau_lexer::prelude::{Lexer, Literal, LuauString, TokenType};
+use luau_lexer::prelude::{Lexer, Literal, LuauString, LuauNumber, TokenType};
 
 macro_rules! generate_string_tests {
     ($( $(#[$meta: meta])? $fn_name: ident => $enum: ident ($str: literal) ),* $(,)?) => {
@@ -72,4 +72,39 @@ generate_string_tests!(
     #[should_panic] erroneous_multi_line_4 => MultiLine("[[\nmulti-line test\n]=]"),
     #[should_panic] erroneous_multi_line_5 => MultiLine("[==[\n\n\nmulti-line test]=]"),
     #[should_panic] erroneous_multi_line_6 => MultiLine("[==[multi-\nline]====\n test \n]=]"),
+);
+
+macro_rules! generate_number_tests {
+    ($( $(#[$meta: meta])? $fn_name: ident => $enum: ident ($str: literal) ),* $(,)?) => {
+        $(
+            $(#[$meta])?
+            #[test]
+            fn $fn_name() {
+                let mut lexer = Lexer::new($str);
+
+                assert_eq!(
+                    lexer.next_token().token_type,
+                    TokenType::Literal(Literal::Number(LuauNumber::$enum($str.to_string())))
+                );
+                assert_eq!(
+                    lexer.next_token().token_type,
+                    TokenType::EndOfFile
+                );
+                // This line should never error as the lexer will return errors
+                // instead of the correct token types, and thus will error above
+                // but it's here just in case.
+                assert!(lexer.errors.is_empty());
+            }
+        )*
+    };
+}
+
+generate_number_tests!(
+    plain_1 => Plain("1"),
+    plain_2 => Plain("1."),
+    plain_3 => Plain("1.1"),
+    plain_4 => Plain(".1"),
+
+    hexadecimal => Hex("0x0123456789ABCDEF"),
+    binary => Binary("0b11001010101001"),
 );
