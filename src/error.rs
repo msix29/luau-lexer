@@ -1,13 +1,13 @@
 use crate::position::Position;
 
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub struct LexerError {
+pub struct ParseError {
     start: Position,
     message: String,
     end: Option<Position>,
 }
 
-impl LexerError {
+impl ParseError {
     #[inline]
     pub fn new(start: Position, message: String, end: Option<Position>) -> Self {
         Self { start, message, end }

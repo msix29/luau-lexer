@@ -1,6 +1,6 @@
 use crate::{
     prelude::{
-        CompoundOperator, Keyword, Lexable, Lexer, LexerError, Literal, Operator, PartialKeyword,
+        CompoundOperator, Keyword, Lexable, Lexer, ParseError, Literal, Operator, PartialKeyword,
         Symbol, TokenType,
     },
     utils::is_identifier_start,
@@ -91,7 +91,7 @@ impl Lexable for TokenType {
 
         lexer.increment_position(1);
 
-        Some(Self::Error(LexerError::new(
+        Some(Self::Error(ParseError::new(
             start,
             format!("Unexpected character: {}", character),
             Some(lexer.lexer_position),

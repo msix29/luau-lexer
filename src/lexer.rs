@@ -1,7 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use crate::{
-    error::LexerError,
+    error::ParseError,
     state::State,
     token::{Token, TokenType}, utils::can_be_identifier,
 };
@@ -10,7 +10,7 @@ use crate::{
 pub struct Lexer<'a> {
     pub(crate) input: &'a str,
     pub(crate) chars: Vec<char>,
-    pub/* (crate) */ errors: Vec<LexerError>,
+    pub/* (crate) */ errors: Vec<ParseError>,
 
     pub(crate) state: State,
 }

@@ -1,5 +1,5 @@
 use crate::{
-    prelude::{Lexable, Lexer, LexerError},
+    prelude::{Lexable, Lexer, ParseError},
     utils::is_numeric,
 };
 
@@ -51,7 +51,7 @@ impl LuauString {
 
         while let Some(character) = lexer.current_char() {
             if character == '\n' && !Self::is_multi_line_escaped(&characters) {
-                lexer.errors.push(LexerError::new(
+                lexer.errors.push(ParseError::new(
                     start,
                     format!(
                         "String must be single line, use `\\z` here or add a {}.",
@@ -74,7 +74,7 @@ impl LuauString {
         }
 
         if !is_done {
-            lexer.errors.push(LexerError::new(
+            lexer.errors.push(ParseError::new(
                 start,
                 format!("Missing {} to close string.", quote_character),
                 Some(lexer.lexer_position),
@@ -99,7 +99,7 @@ impl LuauString {
         if lexer.consume('[') {
             characters.push('[');
         } else {
-            lexer.errors.push(LexerError::new(
+            lexer.errors.push(ParseError::new(
                 start,
                 "Missing `[`.".to_string(),
                 Some(lexer.lexer_position),
@@ -132,7 +132,7 @@ impl LuauString {
         }
 
         if !is_done {
-            lexer.errors.push(LexerError::new(
+            lexer.errors.push(ParseError::new(
                 start,
                 "Malformed multi-line string.".to_string(),
                 Some(lexer.lexer_position),
@@ -176,7 +176,7 @@ impl LuauNumber {
                 lexer.increment_position_by_char(current_char);
             } else if current_char == '.' {
                 if found_decimal {
-                    break lexer.errors.push(LexerError::new(
+                    break lexer.errors.push(ParseError::new(
                         lexer.lexer_position,
                         "Numbers can only have one decimal point.".to_string(),
                         None,
@@ -216,14 +216,14 @@ impl LuauNumber {
 
         // ? Do we exit or return the faulty number?
         if !found_digit {
-            lexer.errors.push(LexerError::new(
+            lexer.errors.push(ParseError::new(
                 lexer.lexer_position,
                 "Hexadecimal numbers must have at least one digit after '0x'.".to_string(),
                 None,
             ));
         }
         if found_digit && is_faulty {
-            lexer.errors.push(LexerError::new(
+            lexer.errors.push(ParseError::new(
                 lexer.lexer_position,
                 "Hexadecimal numbers must only contain hexadecimal digits.".to_string(),
                 None,
@@ -256,14 +256,14 @@ impl LuauNumber {
 
         // ? Do we exit or return the faulty number?
         if !found_digit {
-            lexer.errors.push(LexerError::new(
+            lexer.errors.push(ParseError::new(
                 lexer.lexer_position,
                 "Binary number must have at least one digit after '0b'.".to_string(),
                 None,
             ));
         }
         if found_digit && is_faulty {
-            lexer.errors.push(LexerError::new(
+            lexer.errors.push(ParseError::new(
                 lexer.lexer_position,
                 "Binary number must only have 1s and 0s.".to_string(),
                 None,

@@ -1,6 +1,6 @@
 mod r#impl;
 
-use crate::prelude::{LexerError, Position};
+use crate::prelude::{ParseError, Position};
 
 crate_reexport!(literal, keyword, symbol, operator);
 
@@ -31,7 +31,7 @@ impl PartialEq<TokenType> for Token {
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum TokenType {
-    Error(LexerError),
+    Error(ParseError),
     Literal(Literal),
     Identifier(String),
     Keyword(Keyword),
@@ -61,7 +61,7 @@ impl TokenType {
 }
 
 impl_from!(TokenType <= {
-    Error(LexerError),
+    Error(ParseError),
     Literal(Literal),
     Keyword(Keyword),
     PartialKeyword(PartialKeyword),
