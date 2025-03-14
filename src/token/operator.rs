@@ -15,6 +15,13 @@ pub enum Operator {
     Equal,
     NotEqual,
 
+    And,
+    Or,
+    Not,
+
+    Intersection,
+    Union,
+
     Length,
 }
 
@@ -31,6 +38,8 @@ impl Operator {
             '=' => Some(Self::Equal),
             '~' if lexer.consume_with_next('=') => Some(Self::NotEqual),
             '#' => Some(Self::Length),
+            '&' => Some(Self::Intersection),
+            '|' => Some(Self::Union),
             _ => None,
         };
         if value.is_some() {

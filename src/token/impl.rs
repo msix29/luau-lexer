@@ -71,6 +71,9 @@ impl Lexable for TokenType {
                 match word.as_str() {
                     "true" => return Some(Self::Literal(Literal::Boolean(true))),
                     "false" => return Some(Self::Literal(Literal::Boolean(false))),
+                    "and" => return Some(Self::Operator(Operator::And)),
+                    "or" => return Some(Self::Operator(Operator::Or)),
+                    "not" => return Some(Self::Operator(Operator::Not)),
                     _ => return Some(Self::Identifier(word)),
                 }
             }
