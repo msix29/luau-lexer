@@ -1,4 +1,15 @@
-use luau_lexer::prelude::{Lexer, Literal, LuauString, LuauNumber, TokenType};
+use luau_lexer::prelude::{Lexer, Literal, LuauNumber, LuauString, TokenType};
+
+macro_rules! asserts {
+    ($lexer: ident, $value: expr) => {
+        assert_eq!($lexer.next_token().token_type, $value);
+        assert_eq!($lexer.next_token().token_type, TokenType::EndOfFile);
+        // This line should never error as the lexer will return errors
+        // instead of the correct token types, and thus will error above
+        // but it's here just in case.
+        assert!($lexer.errors.is_empty());
+    };
+}
 
 macro_rules! generate_string_tests {
     ($( $(#[$meta: meta])? $fn_name: ident => $enum: ident ($str: literal) ),* $(,)?) => {
@@ -8,18 +19,10 @@ macro_rules! generate_string_tests {
             fn $fn_name() {
                 let mut lexer = Lexer::new($str);
 
-                assert_eq!(
-                    lexer.next_token().token_type,
+                asserts!(
+                    lexer,
                     TokenType::Literal(Literal::String(LuauString::$enum($str.to_string())))
                 );
-                assert_eq!(
-                    lexer.next_token().token_type,
-                    TokenType::EndOfFile
-                );
-                // This line should never error as the lexer will return errors
-                // instead of the correct token types, and thus will error above
-                // but it's here just in case.
-                assert!(lexer.errors.is_empty());
             }
         )*
     };
@@ -82,18 +85,10 @@ macro_rules! generate_number_tests {
             fn $fn_name() {
                 let mut lexer = Lexer::new($str);
 
-                assert_eq!(
-                    lexer.next_token().token_type,
+                asserts!(
+                    lexer,
                     TokenType::Literal(Literal::Number(LuauNumber::$enum($str.to_string())))
                 );
-                assert_eq!(
-                    lexer.next_token().token_type,
-                    TokenType::EndOfFile
-                );
-                // This line should never error as the lexer will return errors
-                // instead of the correct token types, and thus will error above
-                // but it's here just in case.
-                assert!(lexer.errors.is_empty());
             }
         )*
     };
