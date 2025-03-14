@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 use crate::{
     error::LexerError,
     state::State,
-    token::{Token, TokenType},
+    token::{Token, TokenType}, utils::can_be_identifier,
 };
 
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -113,7 +113,7 @@ impl<'a> Lexer<'a> {
     pub fn consume_identifier(&mut self) -> String {
         let start = self.position;
         while let Some(character) = self.current_char() {
-            if character.is_alphanumeric() {
+            if can_be_identifier(character) {
                 self.increment_position_by_char(character);
             } else {
                 break;

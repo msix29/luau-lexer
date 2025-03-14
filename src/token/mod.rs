@@ -1,4 +1,4 @@
-use crate::prelude::{Lexable, Lexer, LexerError, Position};
+use crate::{prelude::{Lexable, Lexer, LexerError, Position}, utils::is_identifier_start};
 
 crate_reexport!(literal);
 
@@ -31,6 +31,7 @@ impl PartialEq<TokenType> for Token {
 pub enum TokenType {
     Error(LexerError),
     Literal(Literal),
+    Identifier(String),
     EndOfFile,
 }
 
@@ -73,6 +74,11 @@ impl Lexable for TokenType {
                     return Some(TokenType::Literal(string));
                 }
             }
+            _ if is_identifier_start(character) => {
+                let word = lexer.consume_identifier();
+
+                return Some(Self::Identifier(word));
+            },
             _ => (),
         }
 
