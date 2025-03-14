@@ -27,7 +27,11 @@ impl Lexable for TokenType {
             _ if is_identifier_start(character) => {
                 let word = lexer.consume_identifier();
 
-                return Some(Self::Identifier(word));
+                match word.as_str() {
+                    "true" => return Some(Self::Literal(Literal::Boolean(true))),
+                    "false" => return Some(Self::Literal(Literal::Boolean(false))),
+                    _ => return Some(Self::Identifier(word)),
+                }
             }
             _ => (),
         }
