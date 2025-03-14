@@ -1,5 +1,5 @@
 use crate::{
-    prelude::{Lexable, Lexer, LexerError, Literal, TokenType},
+    prelude::{Keyword, Lexable, Lexer, LexerError, Literal, PartialKeyword, TokenType},
     utils::is_identifier_start,
 };
 
@@ -26,6 +26,12 @@ impl Lexable for TokenType {
             }
             _ if is_identifier_start(character) => {
                 let word = lexer.consume_identifier();
+
+                if let Some(keyword) = Keyword::try_from_str(&word) {
+                    return Some(Self::Keyword(keyword));
+                } else if let Some(partial_keyword) = PartialKeyword::try_from_str(&word) {
+                    return Some(Self::PartialKeyword(partial_keyword));
+                }
 
                 match word.as_str() {
                     "true" => return Some(Self::Literal(Literal::Boolean(true))),
