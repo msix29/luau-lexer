@@ -159,9 +159,9 @@ pub enum LuauNumber {
 
 impl LuauNumber {
     pub fn try_parse(lexer: &mut Lexer) -> Option<Self> {
-        match (lexer.current_char()?, lexer.next_char()?) {
-            ('0', 'b') => Self::parse_binary_number(lexer),
-            ('0', 'x') => Self::parse_hex_number(lexer),
+        match (lexer.current_char()?, lexer.next_char()) {
+            ('0', Some('b')) => Self::parse_binary_number(lexer),
+            ('0', Some('x')) => Self::parse_hex_number(lexer),
             _ => Self::parse_number_inner(lexer),
         }
     }
