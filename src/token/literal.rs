@@ -315,3 +315,9 @@ impl Lexable for Literal {
         )
     }
 }
+
+impl_from!(Literal <= {
+    Number(LuauNumber),
+    String(LuauString),
+    Boolean(bool),
+});

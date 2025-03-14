@@ -54,3 +54,8 @@ impl TokenType {
         }
     }
 }
+
+impl_from!(TokenType <= {
+    Error(LexerError),
+    Literal(Literal),
+});
