@@ -152,3 +152,7 @@ impl DerefMut for Lexer<'_> {
         &mut self.state
     }
 }
+
+pub trait Lexable: Sized {
+    fn try_lex(lexer: &mut Lexer) -> Option<Self>;
+}

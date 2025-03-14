@@ -1,4 +1,4 @@
-use crate::{error::LexerError, lexer::Lexer, prelude::Position};
+use crate::prelude::{Lexable, Lexer, LexerError, Position};
 
 crate_reexport!(literal);
 
@@ -52,8 +52,8 @@ impl TokenType {
     }
 }
 
-impl TokenType {
-    pub fn try_lex(lexer: &mut Lexer) -> Option<Self> {
+impl Lexable for TokenType {
+    fn try_lex(lexer: &mut Lexer) -> Option<Self> {
         let character = lexer.current_char()?;
         let start = lexer.lexer_position;
 

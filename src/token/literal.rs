@@ -1,4 +1,7 @@
-use crate::{error::LexerError, lexer::Lexer, utils::is_numeric};
+use crate::{
+    prelude::{Lexable, Lexer, LexerError},
+    utils::is_numeric,
+};
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LuauString {
@@ -12,16 +15,6 @@ pub enum LuauString {
 }
 
 impl LuauString {
-    pub fn try_parse(lexer: &mut Lexer) -> Option<Self> {
-        match lexer.current_char()? {
-            '"' => Self::try_parse_inner(lexer, '"').map(Self::DoubleQuotes),
-            '\'' => Self::try_parse_inner(lexer, '\'').map(Self::SingleQuotes),
-            '`' => Self::try_parse_inner(lexer, '`').map(Self::Bacticks),
-            '[' => Self::try_parse_multi_line(lexer).map(Self::MultiLine),
-            _ => unreachable!("Invalid quote type."),
-        }
-    }
-
     fn is_escaped(characters: &[char]) -> bool {
         let length = characters.len();
         if length == 0 {
@@ -150,6 +143,18 @@ impl LuauString {
     }
 }
 
+impl Lexable for LuauString {
+    fn try_lex(lexer: &mut Lexer) -> Option<Self> {
+        match lexer.current_char()? {
+            '"' => Self::try_parse_inner(lexer, '"').map(Self::DoubleQuotes),
+            '\'' => Self::try_parse_inner(lexer, '\'').map(Self::SingleQuotes),
+            '`' => Self::try_parse_inner(lexer, '`').map(Self::Bacticks),
+            '[' => Self::try_parse_multi_line(lexer).map(Self::MultiLine),
+            _ => unreachable!("Invalid quote type."),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LuauNumber {
     Plain(String),
@@ -158,14 +163,6 @@ pub enum LuauNumber {
 }
 
 impl LuauNumber {
-    pub fn try_parse(lexer: &mut Lexer) -> Option<Self> {
-        match (lexer.current_char()?, lexer.next_char()) {
-            ('0', Some('b')) => Self::parse_binary_number(lexer),
-            ('0', Some('x')) => Self::parse_hex_number(lexer),
-            _ => Self::parse_number_inner(lexer),
-        }
-    }
-
     fn parse_number_inner(lexer: &mut Lexer) -> Option<Self> {
         let start = lexer.position;
         let mut found_decimal = false;
@@ -277,6 +274,16 @@ impl LuauNumber {
     }
 }
 
+impl Lexable for LuauNumber {
+    fn try_lex(lexer: &mut Lexer) -> Option<Self> {
+        match (lexer.current_char()?, lexer.next_char()) {
+            ('0', Some('b')) => Self::parse_binary_number(lexer),
+            ('0', Some('x')) => Self::parse_hex_number(lexer),
+            _ => Self::parse_number_inner(lexer),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Literal {
     Number(LuauNumber),
@@ -287,11 +294,24 @@ pub enum Literal {
 impl Literal {
     #[inline]
     pub fn parse_number(lexer: &mut Lexer) -> Option<Self> {
-        LuauNumber::try_parse(lexer).map(Self::Number)
+        LuauNumber::try_lex(lexer).map(Self::Number)
     }
 
     #[inline]
     pub fn parse_string(lexer: &mut Lexer) -> Option<Self> {
-        LuauString::try_parse(lexer).map(Self::String)
+        LuauString::try_lex(lexer).map(Self::String)
+    }
+}
+
+impl Lexable for Literal {
+    /// This just marks literals as lexable, refrain from using it. Use
+    /// [`Literal::parse_number`], or [`Literal::parse_string`], or the more
+    /// specific [`LuauString::try_lex`], and [`LuauNumber::try_lex`] instead.
+    fn try_lex(_: &mut Lexer) -> Option<Self> {
+        panic!(
+            "\
+            `Literal::try_lex()` should never be used. \
+            Please read the documentation for this function."
+        )
     }
 }
