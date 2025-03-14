@@ -1,5 +1,5 @@
 use crate::{
-    prelude::{Keyword, Lexable, Lexer, LexerError, Literal, PartialKeyword, TokenType},
+    prelude::{Keyword, Lexable, Lexer, LexerError, Literal, PartialKeyword, Symbol, TokenType},
     utils::is_identifier_start,
 };
 
@@ -11,17 +11,35 @@ impl Lexable for TokenType {
         match character {
             '0'..='9' => {
                 if let Some(number) = Literal::parse_number(lexer) {
-                    return Some(TokenType::Literal(number));
+                    return Some(Self::Literal(number));
                 }
             }
-            '.' if matches!(lexer.next_char(), Some('0'..='9')) => {
-                if let Some(number) = Literal::parse_number(lexer) {
-                    return Some(TokenType::Literal(number));
+            '.' => {
+                let next_character = lexer.next_char();
+                if matches!(next_character, Some('0'..='9')) {
+                    if let Some(number) = Literal::parse_number(lexer) {
+                        return Some(Self::Literal(number));
+                    }
+                } else if next_character == Some('.') {
+                    lexer.consume('.');
+                    lexer.consume('.');
+
+                    if !lexer.consume('.') {
+                        lexer.errors.push(LexerError::new(
+                            start,
+                            "Did you mean to add a `.` or remove the extra `.`?".to_string(),
+                            Some(lexer.lexer_position),
+                        ));
+                    }
+
+                    return Some(Self::Symbol(Symbol::Ellipses));
+                } else {
+                    return Some(Self::Symbol(Symbol::Dot));
                 }
             }
             '\'' | '"' | '`' | '[' => {
                 if let Some(string) = Literal::parse_string(lexer) {
-                    return Some(TokenType::Literal(string));
+                    return Some(Self::Literal(string));
                 }
             }
             _ if is_identifier_start(character) => {
@@ -39,12 +57,16 @@ impl Lexable for TokenType {
                     _ => return Some(Self::Identifier(word)),
                 }
             }
-            _ => (),
+            _ => {
+                if let Some(symbol) = Symbol::try_from_char(character) {
+                    return Some(Self::Symbol(symbol));
+                }
+            }
         }
 
         lexer.increment_position(1);
 
-        Some(TokenType::Error(LexerError::new(
+        Some(Self::Error(LexerError::new(
             start,
             format!("Unexpected character: {}", character),
             Some(lexer.lexer_position),
