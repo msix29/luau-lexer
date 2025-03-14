@@ -8,6 +8,8 @@ pub enum Operator {
     Modulo,
     Exponentiation,
 
+    Concatenation,
+
     Equal,
     NotEqual,
 
@@ -42,13 +44,15 @@ pub enum CompoundOperator {
     ModuloEqual,
     ExponentiationEqual,
 
+    ConcatenationEqual,
+
     EqualEqual,
     LessThanOrEqualTo,
     GreaterThanOrEqualTo,
 }
 
 impl CompoundOperator {
-    pub fn try_from_chars(operator: Operator, next_char: Option<char>) -> Option<Self> {
+    pub fn try_from_operator(operator: Operator, next_char: Option<char>) -> Option<Self> {
         if next_char != Some('=') {
             return None;
         }
@@ -61,6 +65,7 @@ impl CompoundOperator {
             Operator::Multiplication => Some(Self::MultiplicationEqual),
             Operator::Modulo => Some(Self::ModuloEqual),
             Operator::Exponentiation => Some(Self::ExponentiationEqual),
+            Operator::Concatenation => Some(Self::ConcatenationEqual),
             Operator::Equal => Some(Self::EqualEqual),
             _ => None,
         }
