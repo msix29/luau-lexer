@@ -1,3 +1,5 @@
+use crate::lexer::Lexer;
+
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Operator {
     Plus,
@@ -17,20 +19,25 @@ pub enum Operator {
 }
 
 impl Operator {
-    pub fn try_from_chars(value: char, next_char: Option<char>) -> Option<Self> {
-        match value {
+    pub fn try_from_chars(character: char, lexer: &mut Lexer) -> Option<Self> {
+        let value = match character {
             '+' => Some(Self::Plus),
             '-' => Some(Self::Minus),
-            '/' if next_char == Some('/') => Some(Self::FloorDivision),
+            '/' if lexer.consume_with_next('/') => Some(Self::FloorDivision),
             '/' => Some(Self::Division),
             '*' => Some(Self::Multiplication),
             '%' => Some(Self::Modulo),
             '^' => Some(Self::Exponentiation),
             '=' => Some(Self::Equal),
-            '~' if next_char == Some('=') => Some(Self::NotEqual),
+            '~' if lexer.consume_with_next('=') => Some(Self::NotEqual),
             '#' => Some(Self::Length),
             _ => None,
+        };
+        if value.is_some() {
+            lexer.consume(character);
         }
+
+        value
     }
 }
 
@@ -52,8 +59,8 @@ pub enum CompoundOperator {
 }
 
 impl CompoundOperator {
-    pub fn try_from_operator(operator: Operator, next_char: Option<char>) -> Option<Self> {
-        if next_char != Some('=') {
+    pub fn try_from_operator(operator: Operator, lexer: &mut Lexer) -> Option<Self> {
+        if !lexer.consume('=') {
             return None;
         }
 

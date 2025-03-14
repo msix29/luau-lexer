@@ -13,11 +13,16 @@ macro_rules! generate_symbols {
         }
 
         impl $struct {
-            pub fn try_from_char(value: char) -> Option<Self> {
-                match value {
+            pub fn try_from_char(character: char, lexer: &mut crate::prelude::Lexer) -> Option<Self> {
+                let value = match character {
                     $( $char => Some(Self::$name), )*
                     _ => None,
+                };
+                if value.is_some() {
+                    lexer.consume(character);
                 }
+
+                value
             }
         }
     };

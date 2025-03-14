@@ -32,7 +32,7 @@ impl Lexable for TokenType {
                     } else {
                         let operator = Operator::Concatenation;
 
-                        return CompoundOperator::try_from_operator(operator, lexer.next_char())
+                        return CompoundOperator::try_from_operator(operator, lexer)
                             .map(Self::CompoundOperator)
                             .or(Some(Self::Operator(operator)));
                     }
@@ -45,26 +45,18 @@ impl Lexable for TokenType {
                     return Some(Self::Literal(string));
                 }
             }
-            '>' if lexer.next_char() == Some('=') => {
-                lexer.increment_position(2);
-
+            '>' if lexer.consume_with_next('=') => {
                 return Some(Self::CompoundOperator(
                     CompoundOperator::GreaterThanOrEqualTo,
                 ));
             }
-            '<' if lexer.next_char() == Some('=') => {
-                lexer.increment_position(2);
-
+            '<' if lexer.consume_with_next('=') => {
                 return Some(Self::CompoundOperator(CompoundOperator::LessThanOrEqualTo));
             }
-            '-' if lexer.next_char() == Some('>') => {
-                lexer.increment_position(2);
-
+            '-' if lexer.consume_with_next('>') => {
                 return Some(Self::Symbol(Symbol::Arrow));
             }
-            ':' if lexer.next_char() == Some(':') => {
-                lexer.increment_position(2);
-
+            ':' if lexer.consume_with_next(':') => {
                 return Some(Self::Symbol(Symbol::Typecast));
             }
             _ if is_identifier_start(character) => {
@@ -83,11 +75,11 @@ impl Lexable for TokenType {
                 }
             }
             _ => {
-                if let Some(symbol) = Symbol::try_from_char(character) {
+                if let Some(symbol) = Symbol::try_from_char(character, lexer) {
                     return Some(Self::Symbol(symbol));
                 }
-                if let Some(operator) = Operator::try_from_chars(character, lexer.next_char()) {
-                    return CompoundOperator::try_from_operator(operator, lexer.next_char())
+                if let Some(operator) = Operator::try_from_chars(character, lexer) {
+                    return CompoundOperator::try_from_operator(operator, lexer)
                         .map(Self::CompoundOperator)
                         .or(Some(Self::Operator(operator)));
                 }

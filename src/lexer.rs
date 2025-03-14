@@ -100,6 +100,20 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    #[inline]
+    pub fn consume_with_next(&mut self, character: char) -> bool {
+        if self.next_char() == Some(character) {
+            let current_char = self.current_char().unwrap();
+
+            self.increment_position_by_char(current_char);
+            self.increment_position_by_char(character);
+
+            true
+        } else {
+            false
+        }
+    }
+
     pub fn check_keyword(&mut self, keyword: &str) -> bool {
         if self.input[self.position..].starts_with(keyword) {
             self.increment_position(keyword.len() as u32);
