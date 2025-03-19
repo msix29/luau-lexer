@@ -1,5 +1,7 @@
 pub type PositionComponent = u32;
 
+/// A struct representing a specific point in a document. Lines and characters are
+/// zero-based.
 #[derive(Clone, Copy, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Position {
     /// The line in which this position points to, starting from 0.
