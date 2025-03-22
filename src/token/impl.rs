@@ -1,6 +1,6 @@
 use crate::{
     prelude::{
-        CompoundOperator, Keyword, Lexable, Lexer, ParseError, Literal, Operator, PartialKeyword,
+        CompoundOperator, Keyword, Lexable, Lexer, Literal, Operator, ParseError, PartialKeyword,
         Symbol, TokenType,
     },
     utils::is_identifier_start,
@@ -18,13 +18,14 @@ impl Lexable for TokenType {
                 }
             }
             '.' => {
+                lexer.consume('.');
+
                 let next_character = lexer.next_char();
                 if matches!(next_character, Some('0'..='9')) {
                     if let Some(number) = Literal::parse_number(lexer) {
                         return Some(Self::Literal(number));
                     }
                 } else if next_character == Some('.') {
-                    lexer.consume('.');
                     lexer.consume('.');
 
                     if lexer.consume('.') {
