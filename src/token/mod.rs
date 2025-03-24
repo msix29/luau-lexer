@@ -2,7 +2,7 @@ mod r#impl;
 
 use crate::prelude::{ParseError, Position};
 
-crate_reexport!(literal, keyword, symbol, operator);
+crate_reexport!(literal, keyword, symbol, operator, comment);
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Token {
@@ -39,6 +39,7 @@ pub enum TokenType {
     Error(ParseError),
     Literal(Literal),
     Identifier(String),
+    Comment(Comment),
     Keyword(Keyword),
     PartialKeyword(PartialKeyword),
     Symbol(Symbol),

@@ -6,6 +6,8 @@ use crate::{
     utils::is_identifier_start,
 };
 
+use super::Comment;
+
 impl Lexable for TokenType {
     fn try_lex(lexer: &mut Lexer) -> Option<Self> {
         let character = lexer.current_char()?;
@@ -53,6 +55,9 @@ impl Lexable for TokenType {
             }
             '<' if lexer.consume_with_next('=') => {
                 return Some(Self::CompoundOperator(CompoundOperator::LessThanOrEqualTo));
+            }
+            '-' if lexer.consume_with_next('-') => {
+                return Comment::try_lex(lexer).map(Self::Comment)
             }
             '-' if lexer.consume_with_next('>') => {
                 return Some(Self::Symbol(Symbol::Arrow));

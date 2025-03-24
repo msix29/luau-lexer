@@ -84,7 +84,7 @@ impl LuauString {
         Some(characters.iter().collect::<String>())
     }
 
-    fn try_parse_multi_line(lexer: &mut Lexer) -> Option<String> {
+    pub(crate) fn try_parse_multi_line(lexer: &mut Lexer) -> Option<String> {
         let mut characters = vec!['['];
         let start = lexer.lexer_position;
         let mut equals_count = 0;
