@@ -20,6 +20,7 @@ pub enum Operator {
 
     Intersection,
     Union,
+    Optional,
 
     Length,
 }
@@ -38,6 +39,7 @@ impl Operator {
             '#' => Some(Self::Length),
             '&' => Some(Self::Intersection),
             '|' => Some(Self::Union),
+            '?' => Some(Self::Optional),
             _ => None,
         };
         if value.is_some() {
