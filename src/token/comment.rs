@@ -29,10 +29,12 @@ impl Comment {
 impl Lexable for Comment {
     fn try_lex(lexer: &mut Lexer) -> Option<Self> {
         if lexer.current_char() == Some('[') {
-            LuauString::try_parse_multi_line(lexer)
-                .map(|str| Self::MultiLine(format!("--{}", str)));
+            Some(Self::MultiLine(format!(
+                "--{}",
+                LuauString::try_parse_multi_line(lexer)
+            )))
+        } else {
+            Self::parse_inner(lexer).map(Self::SingleLine)
         }
-
-        Self::parse_inner(lexer).map(Self::SingleLine)
     }
 }
