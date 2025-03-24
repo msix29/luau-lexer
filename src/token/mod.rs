@@ -14,13 +14,18 @@ pub struct Token {
 }
 
 impl Token {
-    pub const END_OF_FILE: Self = Self {
-        start: Position::MAX,
-        spaces_before: String::new(),
-        token_type: TokenType::EndOfFile,
-        spaces_after: String::new(),
-        end: Position::MAX,
-    };
+    pub const END_OF_FILE: Self = Self::empty(TokenType::EndOfFile);
+
+    #[inline]
+    pub const fn empty(token_type: TokenType) -> Self {
+        Self {
+            start: Position::MAX,
+            spaces_before: String::new(),
+            token_type,
+            spaces_after: String::new(),
+            end: Position::MAX,
+        }
+    }
 }
 
 impl PartialEq<TokenType> for Token {

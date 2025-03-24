@@ -44,5 +44,6 @@ generate_keyword_enum!(
         "type" => Type,
         "continue" => Continue,
         "export" => Export,
+        "typeof" => TypeOf,
     }
 );
