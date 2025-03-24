@@ -57,6 +57,15 @@ impl Lexable for TokenType {
             '-' if lexer.consume_with_next('>') => {
                 return Some(Self::Symbol(Symbol::Arrow));
             }
+            '=' => {
+                lexer.consume('=');
+
+                if lexer.consume('=') {
+                    return Some(Self::CompoundOperator(CompoundOperator::EqualEqual));
+                } else {
+                    return Some(Self::Symbol(Symbol::Equal));
+                }
+            }
             ':' if lexer.consume_with_next(':') => {
                 return Some(Self::Symbol(Symbol::Typecast));
             }

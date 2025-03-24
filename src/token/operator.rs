@@ -12,7 +12,6 @@ pub enum Operator {
 
     Concatenation,
 
-    Equal,
     NotEqual,
 
     And,
@@ -35,7 +34,6 @@ impl Operator {
             '*' => Some(Self::Multiplication),
             '%' => Some(Self::Modulo),
             '^' => Some(Self::Exponentiation),
-            '=' => Some(Self::Equal),
             '~' if lexer.consume_with_next('=') => Some(Self::NotEqual),
             '#' => Some(Self::Length),
             '&' => Some(Self::Intersection),
@@ -82,7 +80,6 @@ impl CompoundOperator {
             Operator::Modulo => Some(Self::ModuloEqual),
             Operator::Exponentiation => Some(Self::ExponentiationEqual),
             Operator::Concatenation => Some(Self::ConcatenationEqual),
-            Operator::Equal => Some(Self::EqualEqual),
             _ => None,
         }
     }

@@ -44,6 +44,7 @@ generate_symbols!(
 
         ';' => Semicolon,
         ':' => Colon,
+        '=' => Equal,
 
         ',' => Comma,
         // These are handled manually in the lexer.
