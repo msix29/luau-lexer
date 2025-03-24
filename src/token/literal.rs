@@ -42,7 +42,7 @@ impl LuauString {
         second_last == '\\' && last == 'z'
     }
 
-    fn try_parse_inner(lexer: &mut Lexer, quote_character: char) -> String {
+    fn parse_inner(lexer: &mut Lexer, quote_character: char) -> String {
         let mut characters = vec![quote_character];
         let start = lexer.lexer_position;
         let mut is_done = false;
@@ -84,7 +84,7 @@ impl LuauString {
         characters.iter().collect::<String>()
     }
 
-    pub(crate) fn try_parse_multi_line(lexer: &mut Lexer) -> String {
+    pub(crate) fn parse_multi_line(lexer: &mut Lexer) -> String {
         let mut characters = vec!['['];
         let start = lexer.lexer_position;
         let mut equals_count = 0;
@@ -146,10 +146,10 @@ impl LuauString {
 impl Lexable for LuauString {
     fn try_lex(lexer: &mut Lexer) -> Option<Self> {
         match lexer.current_char()? {
-            '"' => Some(Self::DoubleQuotes(Self::try_parse_inner(lexer, '"'))),
-            '\'' => Some(Self::SingleQuotes(Self::try_parse_inner(lexer, '\''))),
-            '`' => Some(Self::Bacticks(Self::try_parse_inner(lexer, '`'))),
-            '[' => Some(Self::MultiLine(Self::try_parse_multi_line(lexer))),
+            '"' => Some(Self::DoubleQuotes(Self::parse_inner(lexer, '"'))),
+            '\'' => Some(Self::SingleQuotes(Self::parse_inner(lexer, '\''))),
+            '`' => Some(Self::Bacticks(Self::parse_inner(lexer, '`'))),
+            '[' => Some(Self::MultiLine(Self::parse_multi_line(lexer))),
             _ => unreachable!("Invalid quote type."),
         }
     }

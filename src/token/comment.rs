@@ -31,7 +31,7 @@ impl Lexable for Comment {
         if lexer.current_char() == Some('[') {
             Some(Self::MultiLine(format!(
                 "--{}",
-                LuauString::try_parse_multi_line(lexer)
+                LuauString::parse_multi_line(lexer)
             )))
         } else {
             Self::parse_inner(lexer).map(Self::SingleLine)
