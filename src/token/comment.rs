@@ -10,8 +10,8 @@ pub enum Comment {
 }
 
 impl Comment {
-    fn parse_inner(lexer: &mut Lexer) -> Option<String> {
-        let mut characters = Vec::new();
+    fn parse_inner(lexer: &mut Lexer) -> String {
+        let mut characters = vec!['-', '-'];
 
         while let Some(character) = lexer.current_char() {
             if character == '\n' {
@@ -22,7 +22,7 @@ impl Comment {
             lexer.increment_position_by_char(character);
         }
 
-        Some(characters.iter().collect::<String>())
+        characters.iter().collect::<String>()
     }
 }
 
@@ -34,7 +34,7 @@ impl Lexable for Comment {
                 LuauString::parse_multi_line(lexer)
             )))
         } else {
-            Self::parse_inner(lexer).map(Self::SingleLine)
+            Some(Self::SingleLine(Self::parse_inner(lexer)))
         }
     }
 }
