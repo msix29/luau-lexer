@@ -22,18 +22,16 @@ impl<'a> Lexer<'a> {
     }
 
     #[inline]
-    pub fn with_input(self, input: &'a str) -> Self {
-        Self {
-            input,
-            chars: input.chars().collect(),
-            ..self
-        }
+    pub fn with_input(mut self, input: &'a str) -> Self {
+        self.set_input(input);
+        self
     }
 
     #[inline]
     pub fn set_input(&mut self, input: &'a str) {
         self.input = input;
         self.chars = input.chars().collect();
+        self.last_whitespace = self.skip_whitespace();
     }
 
     #[inline]
