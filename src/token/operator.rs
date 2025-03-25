@@ -1,4 +1,4 @@
-use crate::lexer::Lexer;
+use crate::prelude::Lexer;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]

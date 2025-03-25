@@ -1,9 +1,6 @@
 use smol_str::SmolStr;
 
-use crate::{
-    lexer::{Lexable, Lexer},
-    token::LuauString,
-};
+use crate::prelude::{Lexable, Lexer, LuauString};
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]

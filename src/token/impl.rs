@@ -1,12 +1,10 @@
 use crate::{
     prelude::{
-        CompoundOperator, Keyword, Lexable, Lexer, Literal, Operator, ParseError, PartialKeyword,
-        Symbol, TokenType,
+        Comment, CompoundOperator, Keyword, Lexable, Lexer, Literal, Operator, ParseError,
+        PartialKeyword, Symbol, TokenType,
     },
     utils::is_identifier_start,
 };
-
-use super::Comment;
 
 impl Lexable for TokenType {
     fn try_lex(lexer: &mut Lexer) -> Option<Self> {
