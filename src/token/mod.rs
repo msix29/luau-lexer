@@ -1,5 +1,7 @@
 mod r#impl;
 
+use smol_str::SmolStr;
+
 use crate::prelude::{ParseError, Position};
 
 crate_reexport!(literal, keyword, symbol, operator, comment);
@@ -7,9 +9,9 @@ crate_reexport!(literal, keyword, symbol, operator, comment);
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Token {
     pub start: Position,
-    pub spaces_before: String,
+    pub spaces_before: SmolStr,
     pub token_type: TokenType,
-    pub spaces_after: String,
+    pub spaces_after: SmolStr,
     pub end: Position,
 }
 
@@ -20,9 +22,9 @@ impl Token {
     pub const fn empty(token_type: TokenType) -> Self {
         Self {
             start: Position::MAX,
-            spaces_before: String::new(),
+            spaces_before: SmolStr::new_inline(""),
             token_type,
-            spaces_after: String::new(),
+            spaces_after: SmolStr::new_inline(""),
             end: Position::MAX,
         }
     }
@@ -38,7 +40,7 @@ impl PartialEq<TokenType> for Token {
 pub enum TokenType {
     Error(ParseError),
     Literal(Literal),
-    Identifier(String),
+    Identifier(SmolStr),
     Comment(Comment),
     Keyword(Keyword),
     PartialKeyword(PartialKeyword),
@@ -53,14 +55,14 @@ impl TokenType {
         self,
         start: Position,
         end: Position,
-        spaces_before: String,
-        spaces_after: String,
+        spaces_before: impl Into<SmolStr>,
+        spaces_after: impl Into<SmolStr>,
     ) -> Token {
         Token {
             start,
-            spaces_before,
+            spaces_before: spaces_before.into(),
             token_type: self,
-            spaces_after,
+            spaces_after: spaces_after.into(),
             end,
         }
     }

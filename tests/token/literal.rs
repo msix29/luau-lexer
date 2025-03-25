@@ -21,7 +21,7 @@ macro_rules! generate_string_tests {
 
                 asserts!(
                     lexer,
-                    TokenType::Literal(Literal::String(LuauString::$enum($str.to_string())))
+                    TokenType::Literal(Literal::String(LuauString::$enum($str.into())))
                 );
             }
         )*
@@ -87,7 +87,7 @@ macro_rules! generate_number_tests {
 
                 asserts!(
                     lexer,
-                    TokenType::Literal(Literal::Number(LuauNumber::$enum($str.to_string())))
+                    TokenType::Literal(Literal::Number(LuauNumber::$enum($str.into())))
                 );
             }
         )*

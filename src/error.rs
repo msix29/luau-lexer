@@ -1,16 +1,22 @@
+use smol_str::SmolStr;
+
 use crate::position::Position;
 
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ParseError {
     start: Position,
-    message: String,
+    message: SmolStr,
     end: Option<Position>,
 }
 
 impl ParseError {
     #[inline]
-    pub fn new(start: Position, message: String, end: Option<Position>) -> Self {
-        Self { start, message, end }
+    pub fn new(start: Position, message: impl Into<SmolStr>, end: Option<Position>) -> Self {
+        Self {
+            start,
+            message: message.into(),
+            end,
+        }
     }
 
     #[inline]

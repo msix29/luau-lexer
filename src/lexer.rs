@@ -1,5 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
+use smol_str::SmolStr;
+
 use crate::{
     error::ParseError,
     state::State,
@@ -52,8 +54,8 @@ impl<'a> Lexer<'a> {
             return TokenType::Error(error).into_token(
                 start,
                 self.lexer_position,
-                "".to_string(),
-                "".to_string(),
+                "",
+                "",
             );
         }
 
@@ -122,7 +124,7 @@ impl<'a> Lexer<'a> {
         false
     }
 
-    pub fn consume_identifier(&mut self) -> String {
+    pub fn consume_identifier(&mut self) -> SmolStr {
         let start = self.position;
         while let Some(character) = self.current_char() {
             if can_be_identifier(character) {
@@ -132,10 +134,10 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        self.input[start..self.position].to_string()
+        self.input[start..self.position].into()
     }
 
-    pub fn skip_whitespace(&mut self) -> String {
+    pub fn skip_whitespace(&mut self) -> SmolStr {
         let start = self.position;
         while let Some(character) = self.current_char() {
             if character.is_whitespace() {
@@ -146,7 +148,7 @@ impl<'a> Lexer<'a> {
         }
 
         (start != self.position)
-            .then(|| self.input[start..self.position].to_string())
+            .then(|| self.input[start..self.position].into())
             .unwrap_or_default()
     }
 }

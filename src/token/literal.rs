@@ -1,3 +1,5 @@
+use smol_str::SmolStr;
+
 use crate::{
     prelude::{Lexable, Lexer, ParseError},
     utils::is_numeric,
@@ -8,10 +10,10 @@ pub enum LuauString {
     // the stored string will include the quotes/double quotes/backticks. The only
     // reason the different types actually exist is to allow the user to easily know
     // which one is used without needing to check the actual string.
-    SingleQuotes(String),
-    DoubleQuotes(String),
-    Bacticks(String),
-    MultiLine(String),
+    SingleQuotes(SmolStr),
+    DoubleQuotes(SmolStr),
+    Bacticks(SmolStr),
+    MultiLine(SmolStr),
 }
 
 impl LuauString {
@@ -42,7 +44,7 @@ impl LuauString {
         second_last == '\\' && last == 'z'
     }
 
-    fn parse_inner(lexer: &mut Lexer, quote_character: char) -> String {
+    fn parse_inner(lexer: &mut Lexer, quote_character: char) -> SmolStr {
         let mut characters = vec![quote_character];
         let start = lexer.lexer_position;
         let mut is_done = false;
@@ -54,7 +56,7 @@ impl LuauString {
                 lexer.errors.push(ParseError::new(
                     start,
                     format!(
-                        "String must be single line, use `\\z` here or add a {}.",
+                        "SmolStr must be single line, use `\\z` here or add a {}.",
                         quote_character
                     ),
                     Some(lexer.lexer_position),
@@ -81,10 +83,10 @@ impl LuauString {
             ));
         }
 
-        characters.iter().collect::<String>()
+        characters.iter().collect::<String>().into()
     }
 
-    pub(crate) fn parse_multi_line(lexer: &mut Lexer) -> String {
+    pub(crate) fn parse_multi_line(lexer: &mut Lexer) -> SmolStr {
         let mut characters = vec!['['];
         let start = lexer.lexer_position;
         let mut equals_count = 0;
@@ -139,7 +141,7 @@ impl LuauString {
             ));
         }
 
-        characters.iter().collect::<String>()
+        characters.iter().collect::<String>().into()
     }
 }
 
@@ -157,9 +159,9 @@ impl Lexable for LuauString {
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LuauNumber {
-    Plain(String),
-    Binary(String),
-    Hex(String),
+    Plain(SmolStr),
+    Binary(SmolStr),
+    Hex(SmolStr),
 }
 
 impl LuauNumber {
@@ -190,7 +192,7 @@ impl LuauNumber {
             }
         }
 
-        Some(Self::Plain(lexer.input[start..lexer.position].to_string()))
+        Some(Self::Plain(lexer.input[start..lexer.position].into()))
     }
 
     fn parse_hex_number(lexer: &mut Lexer) -> Option<Self> {
@@ -230,7 +232,7 @@ impl LuauNumber {
             ));
         }
 
-        Some(Self::Hex(lexer.input[start..lexer.position].to_string()))
+        Some(Self::Hex(lexer.input[start..lexer.position].into()))
     }
 
     fn parse_binary_number(lexer: &mut Lexer) -> Option<Self> {
@@ -270,7 +272,7 @@ impl LuauNumber {
             ));
         }
 
-        Some(Self::Binary(lexer.input[start..lexer.position].to_string()))
+        Some(Self::Binary(lexer.input[start..lexer.position].into()))
     }
 }
 

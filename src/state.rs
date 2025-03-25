@@ -1,10 +1,12 @@
+use smol_str::SmolStr;
+
 use crate::position::{Position, PositionComponent};
 
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct State {
     pub(crate) position: usize,
     pub(crate) lexer_position: Position,
-    pub(crate) last_whitespace: String,
+    pub(crate) last_whitespace: SmolStr,
 }
 
 impl State {
