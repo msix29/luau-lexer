@@ -3,6 +3,7 @@ use smol_str::SmolStr;
 use crate::position::{Position, PositionComponent};
 
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct State {
     pub(crate) position: usize,
     pub(crate) lexer_position: Position,

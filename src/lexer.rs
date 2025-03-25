@@ -9,6 +9,7 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct Lexer<'a> {
     pub(crate) input: &'a str,
     pub(crate) chars: Vec<char>,

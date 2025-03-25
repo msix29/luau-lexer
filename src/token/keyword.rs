@@ -4,6 +4,7 @@ macro_rules! generate_keyword_enum {
     }) => {
         $(#[$meta])?
         #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+        #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
         $vis enum $struct {
             $( $name, )*
         }

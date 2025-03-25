@@ -6,6 +6,7 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum LuauString {
     // the stored string will include the quotes/double quotes/backticks. The only
     // reason the different types actually exist is to allow the user to easily know
@@ -158,6 +159,7 @@ impl Lexable for LuauString {
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum LuauNumber {
     Plain(SmolStr),
     Binary(SmolStr),
@@ -287,6 +289,7 @@ impl Lexable for LuauNumber {
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum Literal {
     Number(LuauNumber),
     String(LuauString),

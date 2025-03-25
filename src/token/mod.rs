@@ -7,6 +7,7 @@ use crate::prelude::{ParseError, Position};
 crate_reexport!(literal, keyword, symbol, operator, comment);
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct Token {
     pub start: Position,
     pub spaces_before: SmolStr,
@@ -37,6 +38,7 @@ impl PartialEq<TokenType> for Token {
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum TokenType {
     Error(ParseError),
     Literal(Literal),

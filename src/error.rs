@@ -3,6 +3,7 @@ use smol_str::SmolStr;
 use crate::position::Position;
 
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct ParseError {
     start: Position,
     message: SmolStr,

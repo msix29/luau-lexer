@@ -1,6 +1,7 @@
 use crate::lexer::Lexer;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum Operator {
     Plus,
     Minus,
@@ -51,6 +52,7 @@ impl Operator {
 }
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum CompoundOperator {
     PlusEqual,
     MinusEqual,

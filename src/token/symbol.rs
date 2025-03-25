@@ -4,6 +4,7 @@ macro_rules! generate_symbols {
     }) => {
         $(#[$meta])?
         #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+        #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
         $vis enum $struct {
             $( $name, )*
             Dot,
