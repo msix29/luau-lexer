@@ -41,10 +41,21 @@ impl Lexable for TokenType {
                     return Some(Self::Symbol(Symbol::Dot));
                 }
             }
-            '\'' | '"' | '`' | '[' => {
+            '\'' | '"' | '`' => {
                 if let Some(string) = Literal::parse_string(lexer) {
                     return Some(Self::Literal(string));
                 }
+            }
+            '[' => {
+                lexer.consume('[');
+
+                if lexer.next_char() == Some('[') {
+                    if let Some(string) = Literal::parse_string(lexer) {
+                        return Some(Self::Literal(string));
+                    }
+                }
+
+                return Some(Self::Symbol(Symbol::OpeningBrackets));
             }
             '>' if lexer.consume_with_next('=') => {
                 return Some(Self::CompoundOperator(
