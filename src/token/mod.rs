@@ -70,6 +70,40 @@ impl TokenType {
     }
 }
 
+impl TokenType {
+    pub fn try_as_string(&self) -> Option<String> {
+        match self {
+            TokenType::Literal(literal) => match literal {
+                Literal::Number(luau_number) => match luau_number {
+                    LuauNumber::Plain(smol_str)
+                    | LuauNumber::Binary(smol_str)
+                    | LuauNumber::Hex(smol_str) => Some(smol_str.to_string()),
+                },
+                Literal::String(luau_string) => match luau_string {
+                    LuauString::SingleQuotes(smol_str)
+                    | LuauString::DoubleQuotes(smol_str)
+                    | LuauString::Bacticks(smol_str)
+                    | LuauString::MultiLine(smol_str) => Some(smol_str.to_string()),
+                },
+                Literal::Boolean(true) => Some("true".to_string()),
+                Literal::Boolean(false) => Some("false".to_string()),
+            },
+            TokenType::Identifier(smol_str) => Some(smol_str.to_string()),
+            TokenType::Comment(comment) => match comment {
+                Comment::MultiLine(smol_str) | Comment::SingleLine(smol_str) => {
+                    Some(smol_str.to_string())
+                }
+            },
+            TokenType::Keyword(keyword) => Some(keyword.to_string()),
+            TokenType::PartialKeyword(partial_keyword) => Some(partial_keyword.to_string()),
+            TokenType::Symbol(symbol) => Some(symbol.to_string()),
+            TokenType::Operator(operator) => Some(operator.to_string()),
+            TokenType::CompoundOperator(compound_operator) => Some(compound_operator.to_string()),
+            _ => None,
+        }
+    }
+}
+
 impl_from!(TokenType <= {
     Error(ParseError),
     Literal(Literal),

@@ -17,6 +17,14 @@ macro_rules! generate_keyword_enum {
                 }
             }
         }
+
+        impl std::fmt::Display for $struct {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                f.write_str(match self {
+                    $( Self::$name => $str, )*
+                })
+            }
+        }
     };
 }
 

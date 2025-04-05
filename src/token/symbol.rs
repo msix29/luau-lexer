@@ -1,3 +1,5 @@
+use std::fmt::Write;
+
 macro_rules! generate_symbols {
     ($(#[$meta:meta])? $vis:vis enum $struct: ident {
         $( $char: literal => $name: ident ),* $(,)?
@@ -24,6 +26,18 @@ macro_rules! generate_symbols {
                 }
 
                 value
+            }
+        }
+
+        impl std::fmt::Display for $struct {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                match self {
+                    Self::Dot => f.write_str("."),
+                    Self::Ellipses => f.write_str("..."),
+                    Self::Arrow => f.write_str("->"),
+                    Self::Typecast => f.write_str("::"),
+                    $( Self::$name => f.write_char($char), )*
+                }
             }
         }
     };

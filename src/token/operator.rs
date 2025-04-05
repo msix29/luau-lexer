@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::prelude::Lexer;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -51,6 +53,29 @@ impl Operator {
     }
 }
 
+impl Display for Operator {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::Plus => "+",
+            Self::Minus => "-",
+            Self::FloorDivision => "/",
+            Self::Division => "/",
+            Self::Multiplication => "*",
+            Self::Modulo => "%",
+            Self::Exponentiation => "^",
+            Self::NotEqual => "~",
+            Self::Length => "#",
+            Self::Intersection => "&",
+            Self::Union => "|",
+            Self::Optional => "?",
+            Self::Concatenation => "..",
+            Self::And => "and",
+            Self::Or => "or",
+            Self::Not => "not",
+        })
+    }
+}
+
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum CompoundOperator {
@@ -86,5 +111,23 @@ impl CompoundOperator {
             Operator::Concatenation => Some(Self::ConcatenationEqual),
             _ => None,
         }
+    }
+}
+
+impl Display for CompoundOperator {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::PlusEqual => "+=",
+            Self::MinusEqual => "-=",
+            Self::FloorDivisionEqual => "//=",
+            Self::DivisionEqual => "/=",
+            Self::MultiplicationEqual => "*=",
+            Self::ModuloEqual => "%=",
+            Self::ExponentiationEqual => "^=",
+            Self::ConcatenationEqual => "..=",
+            Self::EqualEqual => "==",
+            Self::LessThanOrEqualTo => "<=",
+            Self::GreaterThanOrEqualTo => ">=",
+        })
     }
 }
