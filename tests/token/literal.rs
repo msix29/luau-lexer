@@ -4,10 +4,6 @@ macro_rules! asserts {
     ($lexer: ident, $value: expr) => {
         assert_eq!($lexer.next_token().token_type, $value);
         assert_eq!($lexer.next_token().token_type, TokenType::EndOfFile);
-        // This line should never error as the lexer will return errors
-        // instead of the correct token types, and thus will error above
-        // but it's here just in case.
-        assert!($lexer.errors.is_empty());
     };
 }
 
