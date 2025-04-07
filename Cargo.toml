@@ -1,7 +1,15 @@
 [package]
 name = "luau-lexer"
+description = "A lexer for the luau language."
 version = "0.1.0"
 edition = "2021"
+license = "Apache-2.0"
+readme = "README.md"
+keywords = ["luau", "lexer"]
+
+documentation = "https://docs.rs/luau-lexer"
+repository = "https://github.com/msix29/luau-lexer"
+homepage = "https://github.com/msix29/luau-lexer"
 
 [dependencies]
 serde = { version = "1.0.219", features = ["derive"], optional = true }
