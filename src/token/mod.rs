@@ -1,3 +1,5 @@
+//! The [`Token`] struct.
+
 mod r#impl;
 
 use smol_str::SmolStr;
@@ -6,19 +8,33 @@ use crate::prelude::{ParseError, Position};
 
 crate_reexport!(literal, keyword, symbol, operator, comment);
 
+/// A single token. Every [`lexable`](crate::lexer::Lexable) item becomes
+/// a token in [`Lexer::next_token()`](crate::lexer::Lexer::next_token).
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct Token {
+    /// The starting position of this token
     pub start: Position,
+
+    /// The spaces before the token.
     pub spaces_before: SmolStr,
+
+    /// The actual info of the token.
     pub token_type: TokenType,
+
+    /// The spaces after the token.
     pub spaces_after: SmolStr,
+
+    /// The ending position of this token.
     pub end: Position,
 }
 
 impl Token {
+    /// The end of file constant token.
     pub const END_OF_FILE: Self = Self::empty(TokenType::EndOfFile);
 
+    /// Creates an empty token with the specified type. This is only used when
+    /// creating tokens that don't have actual positions.
     #[inline]
     pub const fn empty(token_type: TokenType) -> Self {
         Self {
@@ -37,22 +53,43 @@ impl PartialEq<TokenType> for Token {
     }
 }
 
+/// All token types.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum TokenType {
+    /// An unknown type.
     Error(ParseError),
+
+    /// A luau literal
     Literal(Literal),
+
+    /// An identifier, like a variable name.
     Identifier(SmolStr),
+
+    /// A comment
     Comment(Comment),
+
+    /// A luau-reserved-keyword
     Keyword(Keyword),
+
+    /// A word that can both be a keyword and an identifier.
     PartialKeyword(PartialKeyword),
+
+    /// Symbols like `(` and `)`.
     Symbol(Symbol),
+
+    /// Operators like `+` and `and`
     Operator(Operator),
+
+    /// Compound operators like `+=` and `//=`
     CompoundOperator(CompoundOperator),
+
+    /// The end of file token.
     EndOfFile,
 }
 
 impl TokenType {
+    /// Turn this token type into a [`Token`] with the passed properties.
     pub fn into_token(
         self,
         start: Position,
@@ -71,6 +108,7 @@ impl TokenType {
 }
 
 impl TokenType {
+    /// Try converting this token type into a string.
     pub fn try_as_string(&self) -> Option<String> {
         match self {
             TokenType::Literal(literal) => match literal {

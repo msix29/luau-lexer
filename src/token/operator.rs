@@ -1,34 +1,64 @@
-use std::fmt::Display;
+//! [`Operator`] and [`CompoundOperator`] structs.
+
+use std::fmt::{Display, Formatter, Result};
 
 use crate::prelude::Lexer;
 
+/// A luau operator like `+` and `-`
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum Operator {
+    /// `+`
     Plus,
+
+    /// `-`
     Minus,
+
+    /// `/`
     Division,
+
+    /// `//`
     FloorDivision,
+
+    /// `*`
     Multiplication,
+
+    /// `%`
     Modulo,
+
+    /// `^`
     Exponentiation,
 
+    /// `..`
     Concatenation,
 
+    /// `~=`
     NotEqual,
 
+    /// `and`
     And,
+
+    /// `or`
     Or,
+
+    /// `not`
     Not,
 
+    /// `&`
     Intersection,
+
+    /// `|`
     Union,
+
+    /// `?`
     Optional,
 
+    /// `#`
     Length,
 }
 
 impl Operator {
+    /// Try converting the character (and maybe the next) into an operator.
     pub fn try_from_chars(character: char, lexer: &mut Lexer) -> Option<Self> {
         let value = match character {
             '+' => Some(Self::Plus),
@@ -54,7 +84,7 @@ impl Operator {
 }
 
 impl Display for Operator {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.write_str(match self {
             Self::Plus => "+",
             Self::Minus => "-",
@@ -76,25 +106,47 @@ impl Display for Operator {
     }
 }
 
+/// A luau compound operator like `+=` and `//=`
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum CompoundOperator {
+    /// `+=`
     PlusEqual,
+
+    /// `-=`
     MinusEqual,
-    FloorDivisionEqual,
+
+    /// `/=`
     DivisionEqual,
+
+    /// `//=`
+    FloorDivisionEqual,
+
+    /// `*=`
     MultiplicationEqual,
+
+    /// `%=`
     ModuloEqual,
+
+    /// `^=`
     ExponentiationEqual,
 
+    /// `..=`
     ConcatenationEqual,
 
+    /// `==`
     EqualEqual,
+
+    /// `<=`
     LessThanOrEqualTo,
+
+    /// `>=`
     GreaterThanOrEqualTo,
 }
 
 impl CompoundOperator {
+    /// Try creating a compound operator from the passed operator, depending on the
+    /// next character.
     pub fn try_from_operator(operator: Operator, lexer: &mut Lexer) -> Option<Self> {
         if !lexer.consume('=') {
             return None;
@@ -115,7 +167,7 @@ impl CompoundOperator {
 }
 
 impl Display for CompoundOperator {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.write_str(match self {
             Self::PlusEqual => "+=",
             Self::MinusEqual => "-=",

@@ -1,3 +1,5 @@
+//! All `impl` blocks for [`TokenType`]
+
 use crate::{
     prelude::{
         Comment, CompoundOperator, Keyword, Lexable, Lexer, Literal, Operator, ParseError,

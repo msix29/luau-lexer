@@ -1,15 +1,32 @@
+//! [`Comment`] struct
+
 use smol_str::SmolStr;
 
 use crate::prelude::{Lexable, Lexer, LuauString};
 
+/// A comment.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum Comment {
+    ///```lua
+    /// -- single line
+    /// ```
     SingleLine(SmolStr),
+
+    ///```lua
+    /// --[[ multiline ]]
+    /// --[[
+    ///     multiline
+    /// ]]
+    /// --[==[
+    ///     multiline
+    /// ]==]
+    /// ```
     MultiLine(SmolStr),
 }
 
 impl Comment {
+    /// Parses a [`Comment::SingleLine`].
     fn parse_inner(lexer: &mut Lexer) -> SmolStr {
         let mut characters = vec!['-', '-'];
 

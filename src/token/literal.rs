@@ -1,3 +1,5 @@
+//! Luau literals
+
 use smol_str::SmolStr;
 
 use crate::{
@@ -5,19 +7,41 @@ use crate::{
     utils::is_numeric,
 };
 
+/// A Luau string. The stored string will include the quotes/double quotes/backticks.
+/// The only reason the different types actually exist is to allow the user to
+/// easily know which one is used without needing to check the actual string.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum LuauString {
-    // the stored string will include the quotes/double quotes/backticks. The only
-    // reason the different types actually exist is to allow the user to easily know
-    // which one is used without needing to check the actual string.
+    ///```lua
+    /// 'single quotes'
+    /// ```
     SingleQuotes(SmolStr),
+
+    ///```lua
+    /// "double quotes"
+    /// ```
     DoubleQuotes(SmolStr),
+
+    ///```lua
+    /// `backticks`
+    /// ```
     Backticks(SmolStr),
+
+    ///```lua
+    /// [[ multi line ]]
+    /// [[
+    ///     multi line
+    /// ]]
+    /// [==[
+    ///     multi line
+    /// ]==]
+    /// ```
     MultiLine(SmolStr),
 }
 
 impl LuauString {
+    /// Whether or not the last character is escaped.
     fn is_escaped(characters: &[char]) -> bool {
         let length = characters.len();
         if length == 0 {
@@ -32,6 +56,7 @@ impl LuauString {
         }
     }
 
+    /// Whether or not the array ends with `\z`.
     fn is_multi_line_escaped(characters: &[char]) -> bool {
         let mut iter = characters.iter().rev().skip_while(|c| c.is_whitespace()); // Skip trailing spaces
 
@@ -45,6 +70,11 @@ impl LuauString {
         second_last == '\\' && last == 'z'
     }
 
+    /// Parses one of the single line variants:
+    ///
+    /// * [`LuauString::SingleQuotes`]
+    /// * [`LuauString::DoubleQuotes`]
+    /// * [`LuauString::Backticks`]
     fn parse_inner(lexer: &mut Lexer, quote_character: char) -> SmolStr {
         let mut characters = vec![quote_character];
         let start = lexer.lexer_position;
@@ -87,6 +117,7 @@ impl LuauString {
         characters.iter().collect::<String>().into()
     }
 
+    /// Parses [`LuauString::MultiLine`].
     pub(crate) fn parse_multi_line(lexer: &mut Lexer) -> SmolStr {
         let mut characters = vec!['['];
         let start = lexer.lexer_position;
@@ -158,15 +189,32 @@ impl Lexable for LuauString {
     }
 }
 
+/// A luau number. The stored string will include the `0b`, or `0x`. The only
+/// reason the different types actually exist is to allow the user to easily
+/// know which one is used without needing to check the actual string.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum LuauNumber {
+    ///```luau
+    /// 1
+    /// 1.1
+    /// .1
+    /// ```
     Plain(SmolStr),
+
+    ///```luau
+    /// 0b111001101
+    /// ```
     Binary(SmolStr),
+
+    ///```luau
+    /// 0xAB02C
+    /// ```
     Hex(SmolStr),
 }
 
 impl LuauNumber {
+    /// Parses a [`LuauNumber::Plain`].
     fn parse_number_inner(lexer: &mut Lexer) -> Option<Self> {
         let start = lexer.position;
         let mut found_decimal = false;
@@ -197,6 +245,7 @@ impl LuauNumber {
         Some(Self::Plain(lexer.input[start..lexer.position].into()))
     }
 
+    /// Parses a [`LuauNumber::Hex`].
     fn parse_hex_number(lexer: &mut Lexer) -> Option<Self> {
         let start = lexer.position;
         let mut found_digit = false;
@@ -237,6 +286,7 @@ impl LuauNumber {
         Some(Self::Hex(lexer.input[start..lexer.position].into()))
     }
 
+    /// Parses a [`LuauNumber::Binary`].
     fn parse_binary_number(lexer: &mut Lexer) -> Option<Self> {
         let start = lexer.position;
         let mut found_digit = false;
@@ -288,20 +338,28 @@ impl Lexable for LuauNumber {
     }
 }
 
+/// A Luau literal value
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum Literal {
+    /// A numeric value
     Number(LuauNumber),
+
+    /// A string
     String(LuauString),
+
+    /// A boolean
     Boolean(bool),
 }
 
 impl Literal {
+    /// Parses a [`Literal::Number`].
     #[inline]
     pub fn parse_number(lexer: &mut Lexer) -> Option<Self> {
         LuauNumber::try_lex(lexer).map(Self::Number)
     }
 
+    /// Parses a [`Literal::String`].
     #[inline]
     pub fn parse_string(lexer: &mut Lexer) -> Option<Self> {
         LuauString::try_lex(lexer).map(Self::String)
