@@ -6,7 +6,7 @@
 //! # Usage:
 //!
 //! ```rust
-//! use luau_lexer::prelude::Lexer;
+//! use luau_lexer::prelude::{Lexer, TokenType};
 //!
 //! let code = r#"local foo = "Hello, World!""#;
 //! let mut lexer = Lexer::new(code);
