@@ -55,7 +55,7 @@ generate_string_tests!(
     #[should_panic] erroneous_single_quotes => SingleQuotes("'single\nquotes test"),
 
     #[should_panic] erroneous_double_quotes_empty => DoubleQuotes(r#"""#),
-    #[should_panic] erroneous_double_quotes => DoubleQuotes(r#""\nouble quotes test"#),
+    #[should_panic] erroneous_double_quotes => DoubleQuotes(r#""\ndouble quotes test"#),
 
     #[should_panic] erroneous_backticks_empty => Backticks("`"),
     #[should_panic] erroneous_backticks => Backticks("`backticks\ntest"),
