@@ -92,5 +92,8 @@ generate_symbols!(
 
         /// `,`
         ',' => Comma,
+
+        /// `@`
+        '@' => At,
     }
 );
