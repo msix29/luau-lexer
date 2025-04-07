@@ -118,8 +118,14 @@ generate_number_tests!(
 fn bool() {
     let mut lexer = Lexer::new("true false");
 
-    assert_eq!(lexer.next_token().token_type, TokenType::Literal(Literal::Boolean(true)));
-    assert_eq!(lexer.next_token().token_type, TokenType::Literal(Literal::Boolean(false)));
+    assert_eq!(
+        lexer.next_token().token_type,
+        TokenType::Literal(Literal::Boolean(true))
+    );
+    assert_eq!(
+        lexer.next_token().token_type,
+        TokenType::Literal(Literal::Boolean(false))
+    );
 }
 
 #[should_panic]
@@ -127,5 +133,8 @@ fn bool() {
 fn erroneous_bool() {
     let mut lexer = Lexer::new("tru");
 
-    assert_eq!(lexer.next_token().token_type, TokenType::Literal(Literal::Boolean(true)));
+    assert_eq!(
+        lexer.next_token().token_type,
+        TokenType::Literal(Literal::Boolean(true))
+    );
 }
