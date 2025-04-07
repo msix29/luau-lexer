@@ -37,9 +37,9 @@ generate_string_tests!(
     double_quotes => DoubleQuotes(r#""double quotes test""#),
     double_quotes_multi_line => DoubleQuotes(r#""double quotes\z\ntest""#),
 
-    backticks_empty => Bacticks("``"),
-    backticks => Bacticks("`backticks test`"),
-    backticks_multi_line => Bacticks(r#"`backticks\z\ntest`"#),
+    backticks_empty => Backticks("``"),
+    backticks => Backticks("`backticks test`"),
+    backticks_multi_line => Backticks(r#"`backticks\z\ntest`"#),
 
     multi_line_empty_1 => MultiLine("[[]]"),
     multi_line_empty_2 => MultiLine("[==[]==]"),
@@ -61,8 +61,8 @@ generate_string_tests!(
     #[should_panic] erroneous_double_quotes_empty => DoubleQuotes(r#"""#),
     #[should_panic] erroneous_double_quotes => DoubleQuotes(r#""\nouble quotes test"#),
 
-    #[should_panic] erroneous_backticks_empty => Bacticks("`"),
-    #[should_panic] erroneous_backticks => Bacticks("`backticks\ntest"),
+    #[should_panic] erroneous_backticks_empty => Backticks("`"),
+    #[should_panic] erroneous_backticks => Backticks("`backticks\ntest"),
 
     #[should_panic] erroneous_multi_line_empty_1 => MultiLine("[]]"),
     #[should_panic] erroneous_multi_line_empty_2 => MultiLine("[==[]=]"),

@@ -13,7 +13,7 @@ pub enum LuauString {
     // which one is used without needing to check the actual string.
     SingleQuotes(SmolStr),
     DoubleQuotes(SmolStr),
-    Bacticks(SmolStr),
+    Backticks(SmolStr),
     MultiLine(SmolStr),
 }
 
@@ -151,7 +151,7 @@ impl Lexable for LuauString {
         match lexer.current_char()? {
             '"' => Some(Self::DoubleQuotes(Self::parse_inner(lexer, '"'))),
             '\'' => Some(Self::SingleQuotes(Self::parse_inner(lexer, '\''))),
-            '`' => Some(Self::Bacticks(Self::parse_inner(lexer, '`'))),
+            '`' => Some(Self::Backticks(Self::parse_inner(lexer, '`'))),
             '[' => Some(Self::MultiLine(Self::parse_multi_line(lexer))),
             _ => unreachable!("Invalid quote type."),
         }

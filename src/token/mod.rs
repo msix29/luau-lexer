@@ -82,7 +82,7 @@ impl TokenType {
                 Literal::String(luau_string) => match luau_string {
                     LuauString::SingleQuotes(smol_str)
                     | LuauString::DoubleQuotes(smol_str)
-                    | LuauString::Bacticks(smol_str)
+                    | LuauString::Backticks(smol_str)
                     | LuauString::MultiLine(smol_str) => Some(smol_str.to_string()),
                 },
                 Literal::Boolean(true) => Some("true".to_string()),
