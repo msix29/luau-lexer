@@ -20,14 +20,16 @@ impl Lexable for TokenType {
                 }
             }
             '.' => {
-                lexer.consume('.');
-
-                let next_character = lexer.current_char();
+                let next_character = lexer.next_char();
                 if matches!(next_character, Some('0'..='9')) {
                     if let Some(number) = Literal::parse_number(lexer) {
                         return Some(Self::Literal(number));
                     }
-                } else if next_character == Some('.') {
+                }
+                lexer.consume('.');
+
+                let next_character = lexer.current_char();
+                if next_character == Some('.') {
                     lexer.consume('.');
 
                     if lexer.consume('.') {
