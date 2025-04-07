@@ -83,7 +83,7 @@ impl LuauString {
         lexer.increment_position_by_char(quote_character);
 
         while let Some(character) = lexer.current_char() {
-            if character == '\n' && !Self::is_multi_line_escaped(&characters) {
+            if character == '\n' || character == '\r' && !Self::is_multi_line_escaped(&characters) {
                 lexer.errors.push(ParseError::new(
                     start,
                     format!(

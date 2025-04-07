@@ -93,7 +93,7 @@ impl Display for Operator {
             Self::Multiplication => "*",
             Self::Modulo => "%",
             Self::Exponentiation => "^",
-            Self::NotEqual => "~",
+            Self::NotEqual => "~=",
             Self::Length => "#",
             Self::Intersection => "&",
             Self::Union => "|",

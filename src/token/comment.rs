@@ -31,7 +31,7 @@ impl Comment {
         let mut characters = vec!['-', '-'];
 
         while let Some(character) = lexer.current_char() {
-            if character == '\n' {
+            if character == '\n' || character == '\r'  {
                 break;
             }
 
