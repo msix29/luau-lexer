@@ -51,13 +51,12 @@ impl Lexable for TokenType {
                 }
             }
             '[' => {
-                lexer.consume('[');
-
-                if lexer.next_char() == Some('[') {
+                if matches!(lexer.next_char(), Some('[' | '=')) {
                     if let Some(string) = Literal::parse_string(lexer) {
                         return Some(Self::Literal(string));
                     }
                 }
+                lexer.consume('[');
 
                 return Some(Self::Symbol(Symbol::OpeningBrackets));
             }

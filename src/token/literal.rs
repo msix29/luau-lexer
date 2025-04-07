@@ -124,7 +124,7 @@ impl LuauString {
         let mut equals_count = 0;
         let mut is_done = false;
 
-        lexer.increment_position_by_char('[');
+        lexer.consume('[');
         while lexer.consume('=') {
             equals_count += 1;
             characters.push('=');
