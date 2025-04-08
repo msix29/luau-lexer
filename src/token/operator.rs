@@ -88,7 +88,7 @@ impl Display for Operator {
         f.write_str(match self {
             Self::Plus => "+",
             Self::Minus => "-",
-            Self::FloorDivision => "/",
+            Self::FloorDivision => "//",
             Self::Division => "/",
             Self::Multiplication => "*",
             Self::Modulo => "%",
