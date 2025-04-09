@@ -41,33 +41,42 @@ pub enum LuauString {
 }
 
 impl LuauString {
-    /// Whether or not the last character is escaped.
-    fn is_escaped(characters: &[char]) -> bool {
-        let length = characters.len();
-        if length == 0 {
-            return false;
+    /// Counts the number of backslashes at the end of the passed characters array.
+    fn count_back_slashes(characters: &[char]) -> usize {
+        println!("{:?}", characters);
+        if characters.is_empty() {
+            return 0;
         }
 
-        let has_backslash = characters[length - 2] == '\\';
-        if length == 1 {
-            has_backslash
+        let mut count = 0;
+        let mut i = characters.len() - 1;
+
+        while characters[i] == '\\' {
+            count += 1;
+
+            match i.checked_sub(1) {
+                Some(new_i) => i = new_i,
+                None => break,
+            }
+        }
+
+        count
+    }
+
+    /// Whether or not the last character is escaped.
+    fn is_escaped(characters: &[char]) -> bool {
+        println!("is - {:?}", characters);
+        if characters.len() < 2 {
+            false
         } else {
-            has_backslash && characters[length - 3] != '\\'
+            Self::count_back_slashes(&characters[..characters.len() - 1]) % 2 != 0
         }
     }
 
     /// Whether or not the array ends with `\z`.
+    #[inline]
     fn is_multi_line_escaped(characters: &[char]) -> bool {
-        let mut iter = characters.iter().rev().skip_while(|c| c.is_whitespace()); // Skip trailing spaces
-
-        let Some(&last) = iter.next() else {
-            return false;
-        };
-        let Some(&second_last) = iter.next() else {
-            return false;
-        };
-
-        second_last == '\\' && last == 'z'
+        Self::is_escaped(characters) && characters[characters.len() - 1] == 'z'
     }
 
     /// Parses one of the single line variants:
@@ -101,6 +110,7 @@ impl LuauString {
 
             if character == quote_character && !Self::is_escaped(&characters) {
                 is_done = true;
+                println!("Done.. {characters:?}");
 
                 break;
             }
