@@ -43,7 +43,6 @@ pub enum LuauString {
 impl LuauString {
     /// Counts the number of backslashes at the end of the passed characters array.
     fn count_back_slashes(characters: &[char]) -> usize {
-        println!("{:?}", characters);
         if characters.is_empty() {
             return 0;
         }
@@ -65,7 +64,6 @@ impl LuauString {
 
     /// Whether or not the last character is escaped.
     fn is_escaped(characters: &[char]) -> bool {
-        println!("is - {:?}", characters);
         if characters.len() < 2 {
             false
         } else {
@@ -110,7 +108,6 @@ impl LuauString {
 
             if character == quote_character && !Self::is_escaped(&characters) {
                 is_done = true;
-                println!("Done.. {characters:?}");
 
                 break;
             }
