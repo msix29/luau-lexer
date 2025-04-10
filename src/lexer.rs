@@ -154,12 +154,11 @@ impl<'a> Lexer<'a> {
 
         loop {
             let spaces = self.skip_whitespace();
-            let is_spaces_empty = spaces.is_empty();
 
-            if self.current_char() == Some('-') && self.consume_with_next('-') {
-                trivia.push(Trivia::Comment(Comment::try_lex(self).unwrap()));
-            } else if !is_spaces_empty {
+            if !spaces.is_empty() {
                 trivia.push(Trivia::Spaces(spaces));
+            } else if self.current_char() == Some('-') && self.consume_with_next('-') {
+                trivia.push(Trivia::Comment(Comment::try_lex(self).unwrap()));
             } else {
                 break;
             }
