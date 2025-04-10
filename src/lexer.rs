@@ -6,7 +6,7 @@ use std::ops::{Deref, DerefMut};
 use crate::{
     error::ParseError,
     state::State,
-    token::{Token, TokenType},
+    token::{Comment, Token, TokenType, Trivia},
     utils::can_be_identifier,
 };
 
@@ -47,7 +47,7 @@ impl<'a> Lexer<'a> {
     pub fn set_input(&mut self, input: &'a str) {
         self.input = input;
         self.chars = input.chars().collect();
-        self.last_whitespace = self.skip_whitespace();
+        self.last_trivia = self.skip_trivia();
     }
 
     /// Save the current [`State`]. To be used with [`Lexer::set_state`].
@@ -69,20 +69,25 @@ impl<'a> Lexer<'a> {
             let error = self.errors.remove(0);
             let start = error.start();
 
-            return TokenType::Error(error).into_token(start, self.lexer_position, "", "");
+            return TokenType::Error(error).into_token(
+                start,
+                self.lexer_position,
+                Vec::new(),
+                Vec::new(),
+            );
         }
 
         let start = self.lexer_position;
 
         TokenType::try_lex(self)
             .map(|token_type| {
-                let whitespaces = self.skip_whitespace();
-                let spaces_before = self.last_whitespace.clone();
-                let spaces_after = whitespaces.clone();
+                let trivia = self.skip_trivia();
+                let leading_trivia = self.last_trivia.clone();
+                let trailing_trivia = trivia.clone();
 
-                self.last_whitespace = whitespaces;
+                self.last_trivia = trivia;
 
-                token_type.into_token(start, self.lexer_position, spaces_before, spaces_after)
+                token_type.into_token(start, self.lexer_position, leading_trivia, trailing_trivia)
             })
             .unwrap_or_else(|| Token::END_OF_FILE)
     }
@@ -141,6 +146,26 @@ impl<'a> Lexer<'a> {
         }
 
         self.input[start..self.position].into()
+    }
+
+    /// Get the trivia after the current position and move the lexer to after them.
+    pub fn skip_trivia(&mut self) -> Vec<Trivia> {
+        let mut trivia = Vec::new();
+
+        loop {
+            let spaces = self.skip_whitespace();
+            let is_spaces_empty = spaces.is_empty();
+
+            if self.current_char() == Some('-') && self.consume_with_next('-') {
+                trivia.push(Trivia::Comment(Comment::try_lex(self).unwrap()));
+            } else if !is_spaces_empty {
+                trivia.push(Trivia::Spaces(spaces));
+            } else {
+                break;
+            }
+        }
+
+        trivia
     }
 
     /// Get the whitespaces after the current positive and move the lexer to after

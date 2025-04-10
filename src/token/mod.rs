@@ -16,17 +16,28 @@ pub struct Token {
     /// The starting position of this token
     pub start: Position,
 
-    /// The spaces before the token.
-    pub spaces_before: SmolStr,
+    /// The trivia before the token.
+    pub leading_trivia: Vec<Trivia>,
 
     /// The actual info of the token.
     pub token_type: TokenType,
 
-    /// The spaces after the token.
-    pub spaces_after: SmolStr,
+    /// The trivia after the token.
+    pub trailing_trivia: Vec<Trivia>,
 
     /// The ending position of this token.
     pub end: Position,
+}
+
+/// Trivia that can be before and after a token.
+#[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+pub enum Trivia {
+    /// Spaces, be it whitespace, tabs, new lines, etc.
+    Spaces(SmolStr),
+
+    /// Comment, single or multi line.
+    Comment(Comment),
 }
 
 impl Token {
@@ -39,9 +50,9 @@ impl Token {
     pub const fn empty(token_type: TokenType) -> Self {
         Self {
             start: Position::MAX,
-            spaces_before: SmolStr::new_inline(""),
+            leading_trivia: Vec::new(),
             token_type,
-            spaces_after: SmolStr::new_inline(""),
+            trailing_trivia: Vec::new(),
             end: Position::MAX,
         }
     }
@@ -94,14 +105,14 @@ impl TokenType {
         self,
         start: Position,
         end: Position,
-        spaces_before: impl Into<SmolStr>,
-        spaces_after: impl Into<SmolStr>,
+        leading_trivia: Vec<Trivia>,
+        trailing_trivia: Vec<Trivia>,
     ) -> Token {
         Token {
             start,
-            spaces_before: spaces_before.into(),
+            leading_trivia,
             token_type: self,
-            spaces_after: spaces_after.into(),
+            trailing_trivia,
             end,
         }
     }

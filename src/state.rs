@@ -2,7 +2,7 @@
 
 use smol_str::SmolStr;
 
-use crate::position::{Position, PositionComponent};
+use crate::{position::{Position, PositionComponent}, token::Trivia};
 
 /// A struct representing the state of a lexer at a specific time.
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -15,7 +15,7 @@ pub struct State {
     pub(crate) lexer_position: Position,
 
     /// The spaces after the last parsed token.
-    pub(crate) last_whitespace: SmolStr,
+    pub(crate) last_trivia: Vec<Trivia>,
 }
 
 impl State {
