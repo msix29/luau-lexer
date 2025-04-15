@@ -2,7 +2,7 @@
 name = "luau-lexer"
 description = "A lexer for the luau language."
 version = "0.2.4"
-edition = "2021"
+edition = "2024"
 license = "MIT"
 readme = "README.md"
 keywords = ["luau", "lexer"]
