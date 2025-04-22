@@ -136,7 +136,7 @@ impl<'a> Lexer<'a> {
     /// Consume the next identifier and return it. This assumes there's at least
     /// one character to form a valid identifier at the current position,
     pub fn consume_identifier(&mut self) -> SmolStr {
-        let start = self.position;
+        let start = self.byte_position;
         while let Some(character) = self.current_char() {
             if can_be_identifier(character) {
                 self.increment_position_by_char(character);
@@ -145,7 +145,7 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        self.input[start..self.position].into()
+        self.input[start..self.byte_position].into()
     }
 
     /// Get the trivia after the current position and move the lexer to after them.
@@ -170,7 +170,7 @@ impl<'a> Lexer<'a> {
     /// Get the whitespaces after the current positive and move the lexer to after
     /// them.
     pub fn skip_whitespace(&mut self) -> SmolStr {
-        let start = self.position;
+        let start = self.byte_position;
         while let Some(character) = self.current_char() {
             if character.is_whitespace() {
                 self.increment_position_by_char(character);
@@ -180,7 +180,7 @@ impl<'a> Lexer<'a> {
         }
 
         (start != self.position)
-            .then(|| self.input[start..self.position].into())
+            .then(|| self.input[start..self.byte_position].into())
             .unwrap_or_default()
     }
 }
