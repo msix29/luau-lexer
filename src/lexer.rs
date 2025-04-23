@@ -179,7 +179,7 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        (start != self.position)
+        (start != self.byte_position)
             .then(|| self.input[start..self.byte_position].into())
             .unwrap_or_default()
     }
