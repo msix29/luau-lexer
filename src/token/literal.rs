@@ -74,7 +74,8 @@ impl LuauString {
     /// Whether or not the array ends with `\z`.
     #[inline]
     fn is_multi_line_escaped(characters: &[char]) -> bool {
-        Self::is_escaped(characters) && characters[characters.len() - 1] == 'z'
+        characters[characters.len() - 1] == '\n' // Been checked before. No need to recheck.
+            || (Self::is_escaped(characters) && characters[characters.len() - 1] == 'z')
     }
 
     /// Parses one of the single line variants:
@@ -90,11 +91,12 @@ impl LuauString {
         lexer.increment_position_by_char(quote_character);
 
         while let Some(character) = lexer.current_char() {
-            if character == '\n' || character == '\r' && !Self::is_multi_line_escaped(&characters) {
+            if (character == '\n' || character == '\r') && !Self::is_multi_line_escaped(&characters)
+            {
                 lexer.errors.push(ParseError::new(
                     start,
                     format!(
-                        "SmolStr must be single line, use `\\z` here or add a {}.",
+                        "Strings must be single line, use `\\z` here or add a {}.",
                         quote_character
                     ),
                     Some(lexer.lexer_position),
