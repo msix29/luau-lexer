@@ -10,8 +10,13 @@ use luau_lexer::prelude::{Lexer, TokenType};
 let code = r#"local foo = "Hello, World!""#;
 let mut lexer = Lexer::new(code);
 let mut token = lexer.next_token();
-while token != TokenType::EndOfFile {
+
+loop {
     println!("{token:?}");
+    if token == TokenType::EndOfFile {
+        break;
+    }
+
     token = lexer.next_token();
 }
 ```
