@@ -41,9 +41,6 @@ pub enum Trivia {
 }
 
 impl Token {
-    /// The end of file constant token.
-    pub const END_OF_FILE: Self = Self::empty(TokenType::EndOfFile);
-
     /// Creates an empty token with the specified type. This is only used when
     /// creating tokens that don't have actual positions.
     #[inline]

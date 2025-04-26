@@ -79,17 +79,15 @@ impl<'a> Lexer<'a> {
 
         let start = self.lexer_position;
 
-        TokenType::try_lex(self)
-            .map(|token_type| {
-                let trivia = self.skip_trivia();
-                let leading_trivia = self.last_trivia.clone();
-                let trailing_trivia = trivia.clone();
+        let token_type = TokenType::try_lex(self).unwrap_or(TokenType::EndOfFile);
 
-                self.last_trivia = trivia;
+        let trivia = self.skip_trivia();
+        let leading_trivia = self.last_trivia.clone();
+        let trailing_trivia = trivia.clone();
 
-                token_type.into_token(start, self.lexer_position, leading_trivia, trailing_trivia)
-            })
-            .unwrap_or_else(|| Token::END_OF_FILE)
+        self.last_trivia = trivia;
+
+        token_type.into_token(start, self.lexer_position, leading_trivia, trailing_trivia)
     }
 
     /// Get the current character.
