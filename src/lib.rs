@@ -2,7 +2,6 @@
 #![deny(unsafe_code)]
 #![warn(clippy::missing_docs_in_private_items)]
 #![warn(missing_docs)]
-#![allow(unused)]
 #![warn(clippy::absolute_paths)]
 
 /// A simple macro to reexport modules and include them in [`prelude`].
