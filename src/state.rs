@@ -1,7 +1,5 @@
 //! The [`State`] struct.
 
-use smol_str::SmolStr;
-
 use crate::{
     position::{Position, PositionComponent},
     token::Trivia,
