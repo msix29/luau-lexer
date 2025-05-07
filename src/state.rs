@@ -1,9 +1,8 @@
 //! The [`State`] struct.
 
-use crate::{
-    position::{Position, PositionComponent},
-    token::Trivia,
-};
+use lsp_types::Position;
+
+use crate::token::Trivia;
 
 /// A struct representing the state of a lexer at a specific time.
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -38,7 +37,7 @@ impl State {
     }
 
     /// Move th state ahead by the passed amount of characters.
-    pub fn increment_position(&mut self, amount: PositionComponent) {
+    pub fn increment_position(&mut self, amount: u32) {
         self.position += amount as usize;
         self.lexer_position.character += amount;
     }

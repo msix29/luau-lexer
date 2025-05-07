@@ -1,8 +1,7 @@
 //! The [`ParseError`] struct.
 
 use smol_str::SmolStr;
-
-use crate::position::Position;
+use lsp_types::Position;
 
 /// An error that can be met during parsing.
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]

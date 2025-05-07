@@ -2,9 +2,10 @@
 
 mod r#impl;
 
+use lsp_types::Position;
 use smol_str::SmolStr;
 
-use crate::prelude::{ParseError, Position};
+use crate::prelude::{ParseError, PositionExt};
 
 crate_reexport!(literal, keyword, symbol, operator, comment);
 
