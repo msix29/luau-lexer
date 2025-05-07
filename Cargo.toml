@@ -12,6 +12,7 @@ repository = "https://github.com/msix29/luau-lexer"
 homepage = "https://github.com/msix29/luau-lexer"
 
 [dependencies]
+lsp-types = "0.97.0"
 serde = { version = "1.0.219", features = ["derive"], optional = true }
 smol_str = "0.3.2"
 
