@@ -1,10 +1,7 @@
 //! The actual lexer.
 
 use smol_str::SmolStr;
-use std::{
-    borrow::Cow,
-    ops::{Deref, DerefMut},
-};
+use std::ops::{Deref, DerefMut};
 
 use crate::{
     error::ParseError,
@@ -16,10 +13,7 @@ use crate::{
 /// The main component of this crate, the lexer.
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-pub struct Lexer<'a> {
-    /// The input text
-    pub(crate) input: Cow<'a, str>,
-
+pub struct Lexer {
     /// The characters in the input
     pub(crate) chars: Vec<char>,
 
@@ -31,25 +25,24 @@ pub struct Lexer<'a> {
     pub(crate) state: State,
 }
 
-impl<'a> Lexer<'a> {
+impl Lexer {
     /// Create a new [`Lexer`].
     #[inline]
-    pub fn new(input: impl Into<Cow<'a, str>>) -> Self {
+    pub fn new(input: &str) -> Self {
         Self::default().with_input(input)
     }
 
     /// Set the lexer's input. Meant to be chained.
     #[inline]
-    pub fn with_input(mut self, input: impl Into<Cow<'a, str>>) -> Self {
+    pub fn with_input(mut self, input: &str) -> Self {
         self.set_input(input);
         self
     }
 
     /// Set the lexer's input.
     #[inline]
-    pub fn set_input(&mut self, input: impl Into<Cow<'a, str>>) {
-        self.input = input.into();
-        self.chars = self.input.chars().collect();
+    pub fn set_input(&mut self, input: &str) {
+        self.chars = input.chars().collect();
         self.last_trivia = self.skip_trivia();
     }
 
@@ -137,7 +130,7 @@ impl<'a> Lexer<'a> {
     /// Consume the next identifier and return it. This assumes there's at least
     /// one character to form a valid identifier at the current position,
     pub fn consume_identifier(&mut self) -> SmolStr {
-        let start = self.byte_position;
+        let start = self.position;
         while let Some(character) = self.current_char() {
             if can_be_identifier(character) {
                 self.increment_position_by_char(character);
@@ -146,7 +139,7 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        self.input[start..self.byte_position].into()
+        SmolStr::from_iter(self.chars[start..self.position].to_vec())
     }
 
     /// Get the trivia after the current position and move the lexer to after them.
@@ -171,7 +164,7 @@ impl<'a> Lexer<'a> {
     /// Get the whitespaces after the current positive and move the lexer to after
     /// them.
     pub fn skip_whitespace(&mut self) -> SmolStr {
-        let start = self.byte_position;
+        let start = self.position;
         while let Some(character) = self.current_char() {
             if character.is_whitespace() {
                 self.increment_position_by_char(character);
@@ -180,13 +173,13 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        (start != self.byte_position)
-            .then(|| self.input[start..self.byte_position].into())
+        (start != self.position)
+            .then(|| SmolStr::from_iter(self.chars[start..self.position].to_vec()))
             .unwrap_or_default()
     }
 }
 
-impl Deref for Lexer<'_> {
+impl Deref for Lexer {
     type Target = State;
 
     fn deref(&self) -> &Self::Target {
@@ -194,7 +187,7 @@ impl Deref for Lexer<'_> {
     }
 }
 
-impl DerefMut for Lexer<'_> {
+impl DerefMut for Lexer {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.state
     }

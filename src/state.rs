@@ -11,9 +11,6 @@ pub struct State {
     /// The current character position.
     pub(crate) position: usize,
 
-    /// The current byte position.
-    pub(crate) byte_position: usize,
-
     /// The current [`position`](Position) in the file.
     pub(crate) lexer_position: Position,
 
@@ -25,7 +22,6 @@ impl State {
     /// Move the state by the passed character.
     pub fn increment_position_by_char(&mut self, character: char) {
         self.position += 1;
-        self.byte_position += character.len_utf8();
 
         match character {
             '\n' => {

@@ -225,7 +225,7 @@ pub enum LuauNumber {
 impl LuauNumber {
     /// Parses a [`LuauNumber::Plain`].
     fn parse_number_inner(lexer: &mut Lexer) -> Option<Self> {
-        let start = lexer.byte_position;
+        let start = lexer.position;
         let mut found_decimal = false;
 
         loop {
@@ -251,12 +251,14 @@ impl LuauNumber {
             }
         }
 
-        Some(Self::Plain(lexer.input[start..lexer.byte_position].into()))
+        Some(Self::Plain(SmolStr::from_iter(
+            lexer.chars[start..lexer.position].to_vec(),
+        )))
     }
 
     /// Parses a [`LuauNumber::Hex`].
     fn parse_hex_number(lexer: &mut Lexer) -> Option<Self> {
-        let start = lexer.byte_position;
+        let start = lexer.position;
         let mut found_digit = false;
         let mut is_faulty = false;
 
@@ -292,12 +294,14 @@ impl LuauNumber {
             ));
         }
 
-        Some(Self::Hex(lexer.input[start..lexer.byte_position].into()))
+        Some(Self::Hex(SmolStr::from_iter(
+            lexer.chars[start..lexer.position].to_vec(),
+        )))
     }
 
     /// Parses a [`LuauNumber::Binary`].
     fn parse_binary_number(lexer: &mut Lexer) -> Option<Self> {
-        let start = lexer.byte_position;
+        let start = lexer.position;
         let mut found_digit = false;
         let mut is_faulty = false;
 
@@ -333,7 +337,9 @@ impl LuauNumber {
             ));
         }
 
-        Some(Self::Binary(lexer.input[start..lexer.byte_position].into()))
+        Some(Self::Binary(SmolStr::from_iter(
+            lexer.chars[start..lexer.position].to_vec(),
+        )))
     }
 }
 
