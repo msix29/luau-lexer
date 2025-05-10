@@ -18,3 +18,4 @@ smol_str = "0.3.2"
 
 [features]
 serde = ["dep:serde","smol_str/serde"]
+owned-input = []
