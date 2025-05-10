@@ -1,7 +1,10 @@
 //! The actual lexer.
 
 use smol_str::SmolStr;
-use std::ops::{Deref, DerefMut};
+use std::{
+    borrow::Cow,
+    ops::{Deref, DerefMut},
+};
 
 use crate::{
     error::ParseError,
@@ -15,7 +18,7 @@ use crate::{
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct Lexer<'a> {
     /// The input text
-    pub(crate) input: &'a str,
+    pub(crate) input: Cow<'a, str>,
 
     /// The characters in the input
     pub(crate) chars: Vec<char>,
@@ -31,22 +34,22 @@ pub struct Lexer<'a> {
 impl<'a> Lexer<'a> {
     /// Create a new [`Lexer`].
     #[inline]
-    pub fn new(input: &'a str) -> Self {
+    pub fn new(input: impl Into<Cow<'a, str>>) -> Self {
         Self::default().with_input(input)
     }
 
     /// Set the lexer's input. Meant to be chained.
     #[inline]
-    pub fn with_input(mut self, input: &'a str) -> Self {
+    pub fn with_input(mut self, input: impl Into<Cow<'a, str>>) -> Self {
         self.set_input(input);
         self
     }
 
     /// Set the lexer's input.
     #[inline]
-    pub fn set_input(&mut self, input: &'a str) {
-        self.input = input;
-        self.chars = input.chars().collect();
+    pub fn set_input(&mut self, input: impl Into<Cow<'a, str>>) {
+        self.input = input.into();
+        self.chars = self.input.chars().collect();
         self.last_trivia = self.skip_trivia();
     }
 
