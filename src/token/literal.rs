@@ -75,7 +75,11 @@ impl LuauString {
     #[inline]
     fn is_multi_line_escaped(characters: &[char]) -> bool {
         characters[characters.len() - 1] == '\n' // Been checked before. No need to recheck.
-            || (Self::is_escaped(characters) && characters[characters.len() - 1] == 'z')
+
+            // No need to check for \z, turns out, it can be excluded. It only
+            // affects how the string is displayed when, say, printed, but in code,
+            // they're both the same.
+            || (Self::is_escaped(characters) /* && characters[characters.len() - 1] == 'z' */)
     }
 
     /// Parses one of the single line variants:
@@ -96,7 +100,7 @@ impl LuauString {
                 lexer.errors.push(ParseError::new(
                     start,
                     format!(
-                        "Strings must be single line, use `\\z` here or add a {}.",
+                        "Strings must be single line, use `\\z` or `\\` here or add a {}.",
                         quote_character
                     ),
                     Some(lexer.lexer_position),
