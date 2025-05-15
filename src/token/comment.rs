@@ -39,7 +39,7 @@ impl Comment {
             lexer.increment_position_by_char(character);
         }
 
-        characters.iter().collect::<String>().into()
+        SmolStr::from_iter(characters)
     }
 }
 

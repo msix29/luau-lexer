@@ -71,7 +71,7 @@ impl LuauString {
         }
     }
 
-    /// Whether or not the array ends with `\z`.
+    /// Whether or not the array ends with a multiline escape character.
     #[inline]
     fn is_multi_line_escaped(characters: &[char]) -> bool {
         characters[characters.len() - 1] == '\n' // Been checked before. No need to recheck.
@@ -127,7 +127,7 @@ impl LuauString {
             ));
         }
 
-        characters.iter().collect::<String>().into()
+        SmolStr::from_iter(characters)
     }
 
     /// Parses [`LuauString::MultiLine`].
@@ -186,7 +186,7 @@ impl LuauString {
             ));
         }
 
-        characters.iter().collect::<String>().into()
+        SmolStr::from_iter(characters)
     }
 }
 
