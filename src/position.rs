@@ -3,7 +3,7 @@
 use lsp_types::Position;
 
 /// Extands the [`Position`] type by adding helper functions.
-pub trait PositionExt {
+pub trait Ext {
     /// The largest value that can be represented by a [`Position`].
     const MAX: Self;
     /// The smallest value that can be represented by a [`Position`].
@@ -30,7 +30,7 @@ pub trait PositionExt {
     fn is_before(&self, position: Self) -> bool;
 }
 
-impl PositionExt for Position {
+impl Ext for Position {
     const MAX: Self = Self {
         line: u32::MAX,
         character: u32::MAX,

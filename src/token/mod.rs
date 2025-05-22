@@ -5,7 +5,7 @@ mod r#impl;
 use lsp_types::Position;
 use smol_str::SmolStr;
 
-use crate::prelude::{ParseError, PositionExt};
+use crate::prelude::{Error, PositionExt};
 
 crate_reexport!(literal, keyword, symbol, operator, comment);
 
@@ -65,9 +65,10 @@ impl PartialEq<TokenType> for Token {
 /// All token types.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[allow(clippy::module_name_repetitions)] // `Type` is too general.
 pub enum TokenType {
     /// An unknown type.
-    Error(ParseError),
+    Error(Error),
 
     /// A luau literal
     Literal(Literal),
@@ -99,7 +100,7 @@ pub enum TokenType {
 
 impl TokenType {
     /// Turn this token type into a [`Token`] with the passed properties.
-    pub fn into_token(
+    pub const fn into_token(
         self,
         start: Position,
         end: Position,
@@ -120,7 +121,7 @@ impl TokenType {
     /// Try converting this token type into a string.
     pub fn try_as_string(&self) -> Option<String> {
         match self {
-            TokenType::Literal(literal) => match literal {
+            Self::Literal(literal) => match literal {
                 Literal::Number(luau_number) => match luau_number {
                     LuauNumber::Plain(smol_str)
                     | LuauNumber::Binary(smol_str)
@@ -135,24 +136,24 @@ impl TokenType {
                 Literal::Boolean(true) => Some("true".to_string()),
                 Literal::Boolean(false) => Some("false".to_string()),
             },
-            TokenType::Identifier(smol_str) => Some(smol_str.to_string()),
-            TokenType::Comment(comment) => match comment {
+            Self::Identifier(smol_str) => Some(smol_str.to_string()),
+            Self::Comment(comment) => match comment {
                 Comment::MultiLine(smol_str) | Comment::SingleLine(smol_str) => {
                     Some(smol_str.to_string())
                 }
             },
-            TokenType::Keyword(keyword) => Some(keyword.to_string()),
-            TokenType::PartialKeyword(partial_keyword) => Some(partial_keyword.to_string()),
-            TokenType::Symbol(symbol) => Some(symbol.to_string()),
-            TokenType::Operator(operator) => Some(operator.to_string()),
-            TokenType::CompoundOperator(compound_operator) => Some(compound_operator.to_string()),
-            _ => None,
+            Self::Keyword(keyword) => Some(keyword.to_string()),
+            Self::PartialKeyword(partial_keyword) => Some(partial_keyword.to_string()),
+            Self::Symbol(symbol) => Some(symbol.to_string()),
+            Self::Operator(operator) => Some(operator.to_string()),
+            Self::CompoundOperator(compound_operator) => Some(compound_operator.to_string()),
+            Self::Error(_) | Self::EndOfFile => None,
         }
     }
 }
 
 impl_from!(TokenType <= {
-    Error(ParseError),
+    Error(Error),
     Literal(Literal),
     Keyword(Keyword),
     PartialKeyword(PartialKeyword),

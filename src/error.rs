@@ -6,7 +6,7 @@ use lsp_types::Position;
 /// An error that can be met during parsing.
 #[derive(Clone, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-pub struct ParseError {
+pub struct Error {
     /// The starting location of the error.
     start: Position,
 
@@ -17,7 +17,7 @@ pub struct ParseError {
     end: Option<Position>,
 }
 
-impl ParseError {
+impl Error {
     /// Create a new [`ParseError`].
     #[inline]
     pub fn new(start: Position, message: impl Into<SmolStr>, end: Option<Position>) -> Self {
@@ -30,7 +30,7 @@ impl ParseError {
 
     /// Get the start of the error.
     #[inline]
-    pub fn start(&self) -> Position {
+    pub const fn start(&self) -> Position {
         self.start
     }
 
@@ -42,7 +42,7 @@ impl ParseError {
 
     /// Get the end of the error.
     #[inline]
-    pub fn end(&self) -> Option<Position> {
+    pub const fn end(&self) -> Option<Position> {
         self.end
     }
 }

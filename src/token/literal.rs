@@ -3,11 +3,12 @@
 use smol_str::SmolStr;
 
 use crate::{
-    prelude::{Lexable, Lexer, ParseError},
+    prelude::{Lexable, Lexer, Error},
     utils::is_numeric,
 };
 
 /// A Luau string. The stored string will include the quotes/double quotes/backticks.
+///
 /// The only reason the different types actually exist is to allow the user to
 /// easily know which one is used without needing to check the actual string.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -97,7 +98,7 @@ impl LuauString {
         while let Some(character) = lexer.current_char() {
             if (character == '\n' || character == '\r') && !Self::is_multi_line_escaped(&characters)
             {
-                lexer.errors.push(ParseError::new(
+                lexer.errors.push(Error::new(
                     start,
                     format!(
                         "Strings must be single line, use `\\z` or `\\` here or add a {}.",
@@ -120,7 +121,7 @@ impl LuauString {
         }
 
         if !is_done {
-            lexer.errors.push(ParseError::new(
+            lexer.errors.push(Error::new(
                 start,
                 format!("Missing {} to close string.", quote_character),
                 Some(lexer.lexer_position),
@@ -146,7 +147,7 @@ impl LuauString {
         if lexer.consume('[') {
             characters.push('[');
         } else {
-            lexer.errors.push(ParseError::new(
+            lexer.errors.push(Error::new(
                 start,
                 "Missing `[`.".to_string(),
                 Some(lexer.lexer_position),
@@ -179,7 +180,7 @@ impl LuauString {
         }
 
         if !is_done {
-            lexer.errors.push(ParseError::new(
+            lexer.errors.push(Error::new(
                 start,
                 "Malformed multi-line string.".to_string(),
                 Some(lexer.lexer_position),
@@ -202,9 +203,11 @@ impl Lexable for LuauString {
     }
 }
 
-/// A luau number. The stored string will include the `0b`, or `0x`. The only
-/// reason the different types actually exist is to allow the user to easily
-/// know which one is used without needing to check the actual string.
+/// A luau number. The stored string will include the `0b`, or `0x` in case of
+/// [binary](LuauNumber::Binary) and [hexadecimal](LuauNumber::Hex) respectively.
+///
+/// The only reason the different types actually exist is to allow the user
+/// to easily know which one is used without needing to check the actual string.
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub enum LuauNumber {
@@ -241,7 +244,7 @@ impl LuauNumber {
                 lexer.increment_position_by_char(current_char);
             } else if current_char == '.' {
                 if found_decimal {
-                    break lexer.errors.push(ParseError::new(
+                    break lexer.errors.push(Error::new(
                         lexer.lexer_position,
                         "Numbers can only have one decimal point.".to_string(),
                         None,
@@ -284,14 +287,14 @@ impl LuauNumber {
 
         // ? Do we exit or return the faulty number?
         if !found_digit {
-            lexer.errors.push(ParseError::new(
+            lexer.errors.push(Error::new(
                 lexer.lexer_position,
                 "Hexadecimal numbers must have at least one digit after '0x'.".to_string(),
                 None,
             ));
         }
         if found_digit && is_faulty {
-            lexer.errors.push(ParseError::new(
+            lexer.errors.push(Error::new(
                 lexer.lexer_position,
                 "Hexadecimal numbers must only contain hexadecimal digits.".to_string(),
                 None,
@@ -327,14 +330,14 @@ impl LuauNumber {
 
         // ? Do we exit or return the faulty number?
         if !found_digit {
-            lexer.errors.push(ParseError::new(
+            lexer.errors.push(Error::new(
                 lexer.lexer_position,
                 "Binary number must have at least one digit after '0b'.".to_string(),
                 None,
             ));
         }
         if found_digit && is_faulty {
-            lexer.errors.push(ParseError::new(
+            lexer.errors.push(Error::new(
                 lexer.lexer_position,
                 "Binary number must only have 1s and 0s.".to_string(),
                 None,

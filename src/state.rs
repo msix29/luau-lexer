@@ -20,7 +20,7 @@ pub struct State {
 
 impl State {
     /// Move the state by the passed character.
-    pub fn increment_position_by_char(&mut self, character: char) {
+    pub const fn increment_position_by_char(&mut self, character: char) {
         self.position += 1;
 
         match character {
@@ -33,14 +33,14 @@ impl State {
     }
 
     /// Move th state ahead by the passed amount of characters.
-    pub fn increment_position(&mut self, amount: u32) {
+    pub const fn increment_position(&mut self, amount: u32) {
         self.position += amount as usize;
         self.lexer_position.character += amount;
     }
 
     /// Get the current file [`position`](Position).
     #[inline]
-    pub fn lexer_position(&self) -> Position {
+    pub const fn lexer_position(&self) -> Position {
         self.lexer_position
     }
 }

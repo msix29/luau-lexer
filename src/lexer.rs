@@ -4,7 +4,7 @@ use smol_str::SmolStr;
 use std::ops::{Deref, DerefMut};
 
 use crate::{
-    error::ParseError,
+    error::Error,
     state::State,
     token::{Comment, Token, TokenType, Trivia},
     utils::can_be_identifier,
@@ -19,7 +19,7 @@ pub struct Lexer {
 
     /// The errors met during lexing. They are added when [`Lexer::next_token`] is
     /// called and gets emptied before any new tokens are lexed.
-    pub(crate) errors: Vec<ParseError>,
+    pub(crate) errors: Vec<Error>,
 
     /// The current state of the lexer.
     pub(crate) state: State,
@@ -114,8 +114,11 @@ impl Lexer {
     /// Like [`Lexer::consume`] but checks for the next character instead. Moves
     /// the lexer after both the current and next character.
     #[inline]
+    #[allow(clippy::missing_panics_doc)] // SAFETY: Will never actually panic.
     pub fn consume_with_next(&mut self, character: char) -> bool {
         if self.next_char() == Some(character) {
+            // SAFETY: `self.current_char()` is guaranteed Some(_) due to above line
+            #[allow(clippy::unwrap_used)]
             let current_char = self.current_char().unwrap();
 
             self.increment_position_by_char(current_char);
@@ -143,6 +146,7 @@ impl Lexer {
     }
 
     /// Get the trivia after the current position and move the lexer to after them.
+    #[allow(clippy::missing_panics_doc)] // SAFETY: Will never actually panic.
     pub fn skip_trivia(&mut self) -> Vec<Trivia> {
         let mut trivia = Vec::new();
 
@@ -152,6 +156,8 @@ impl Lexer {
             if !spaces.is_empty() {
                 trivia.push(Trivia::Spaces(spaces));
             } else if self.current_char() == Some('-') && self.consume_with_next('-') {
+                // SAFETY: Will always return `Some(_)`. It's just the trait definition.
+                #[allow(clippy::unwrap_used)]
                 trivia.push(Trivia::Comment(Comment::try_lex(self).unwrap()));
             } else {
                 break;

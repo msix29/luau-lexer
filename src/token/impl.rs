@@ -2,7 +2,7 @@
 
 use crate::{
     prelude::{
-        Comment, CompoundOperator, Keyword, Lexable, Lexer, Literal, Operator, ParseError,
+        Comment, CompoundOperator, Keyword, Lexable, Lexer, Literal, Operator, Error,
         PartialKeyword, Symbol, TokenType,
     },
     utils::is_identifier_start,
@@ -118,7 +118,7 @@ impl Lexable for TokenType {
 
         lexer.increment_position(1);
 
-        Some(Self::Error(ParseError::new(
+        Some(Self::Error(Error::new(
             start,
             format!("Unexpected character: {}", character),
             Some(lexer.lexer_position),

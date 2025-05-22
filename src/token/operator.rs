@@ -109,6 +109,7 @@ impl Display for Operator {
 /// A luau compound operator like `+=` and `//=`
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+#[allow(clippy::module_name_repetitions)] // Wouldn't make much sense otherwise.
 pub enum CompoundOperator {
     /// `+=`
     PlusEqual,
